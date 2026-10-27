@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { profile, type ContactIntent } from "@/content/profile";
 import { useUiStore } from "@/store/ui";
@@ -92,6 +93,13 @@ export function ContactSheet({ contact = profile.contact }: Props) {
             <ReviewMarker decisions={profile.pending.contact} />
           </p>
         ) : null}
+
+        <p className={styles.project}>
+          Planning a project?{" "}
+          <Link href="/work-with-me" onClick={closeContact}>
+            See how working together works
+          </Link>
+        </p>
       </div>
     </dialog>
   );

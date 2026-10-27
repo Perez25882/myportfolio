@@ -52,7 +52,7 @@ describe("TourPanel", () => {
   it("offers a way out of 3D from the stop list", () => {
     render(<TourPanel />);
     fireEvent.click(screen.getByRole("button", { name: "All stops" }));
-    expect(screen.getByRole("link", { name: "Leave 3D · Quick View" })).toHaveAttribute("href", "/quick");
+    expect(screen.getByRole("link", { name: "Leave 3D: open the portfolio" })).toHaveAttribute("href", "/quick");
   });
 
   it("opens the phone sheet with the stop list, and closes both with Less", () => {

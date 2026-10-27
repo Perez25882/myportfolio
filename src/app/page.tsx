@@ -6,10 +6,10 @@ import { profile } from "@/content/profile";
 import styles from "./page.module.css";
 
 const SECTION_LINKS = [
-  { href: "/quick#work", label: "Selected Works" },
-  { href: "/quick#story", label: "Story" },
+  { href: "/quick#work", label: "Selected work" },
+  { href: "/quick#experience", label: "Experience" },
   { href: "/quick#skills", label: "Skills" },
-  { href: "/quick#contact", label: "Opportunities" },
+  { href: "/work-with-me", label: "Work with me" },
 ] as const;
 
 // Matches the stacked layout breakpoint in page.module.css.
@@ -46,7 +46,7 @@ export default function ArrivalPage() {
             Enter Museum <span aria-hidden="true">→</span>
           </Link>
           <Link href="/quick" className={styles.secondary}>
-            Quick View
+            View portfolio
           </Link>
         </div>
 

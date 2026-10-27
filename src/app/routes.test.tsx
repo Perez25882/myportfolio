@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { formatMonth } from "@/lib/format";
 import ArrivalPage from "./page";
@@ -11,12 +11,12 @@ vi.mock("@/components/museum/MuseumExperience", () => ({
 }));
 
 describe("Arrival", () => {
-  it("offers the museum and the Quick View from the first screen", () => {
+  it("offers the museum and the 2D portfolio from the first screen", () => {
     render(<ArrivalPage />);
 
     expect(screen.getByRole("heading", { level: 1, name: /PEREZ/ })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Enter Museum/ })).toHaveAttribute("href", "/museum");
-    expect(screen.getByRole("link", { name: "Quick View" })).toHaveAttribute("href", "/quick");
+    expect(screen.getByRole("link", { name: "View portfolio" })).toHaveAttribute("href", "/quick");
     expect(screen.getByRole("navigation", { name: "Sections" })).toBeInTheDocument();
   });
 });
@@ -26,9 +26,20 @@ describe("FlowDesk case study", () => {
     render(<FlowDeskPage />);
 
     expect(screen.getByRole("heading", { level: 1, name: "FlowDesk" })).toBeInTheDocument();
-    expect(screen.getByText(/It is a simulation, not a live WhatsApp connection/)).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(7);
+    expect(screen.getByText(/Not a live WhatsApp connection, and not real customer data/)).toBeInTheDocument();
+    const beneath = screen.getByRole("region", { name: "Look beneath the surface" });
+    expect(within(beneath).getAllByRole("heading", { level: 3 })).toHaveLength(7);
     expect(screen.getByText("The price floor lives in the database, not the prompt.")).toBeInTheDocument();
+  });
+
+  it("lets the visitor play the conversation without the 3D museum", () => {
+    render(<FlowDeskPage />);
+
+    const demo = screen.getByRole("region", { name: "Play the customer" });
+    expect(within(demo).getByText("Send the first message to start.")).toBeInTheDocument();
+    fireEvent.click(within(demo).getByRole("button", { name: /Do you have the wax print, half piece/ }));
+    expect(within(demo).getByText(/GHS 250 each, GHS 500 for two/)).toBeInTheDocument();
+    expect(within(demo).getByRole("heading", { name: "Order record" })).toBeInTheDocument();
   });
 });
 
@@ -44,7 +55,7 @@ describe("Museum gate", () => {
     render(<MuseumPage />);
 
     expect(screen.getByRole("alert")).toHaveTextContent("can't show the 3D museum");
-    expect(screen.getByRole("link", { name: "Open Quick View" })).toHaveAttribute("href", "/quick");
+    expect(screen.getByRole("link", { name: "Open the portfolio" })).toHaveAttribute("href", "/quick");
   });
 
   it("opens the 3D experience on capable devices", async () => {

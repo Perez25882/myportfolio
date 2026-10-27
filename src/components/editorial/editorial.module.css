@@ -1,0 +1,229 @@
+/*
+ * The 2D portfolio's layout system ("colonnade"): each section's title stands in a narrow pier on
+ * the left and stays in view while its content passes on the right, like walking a verandah.
+ * Shared by Quick View, the case studies and Work with me.
+ */
+
+.page {
+  min-height: calc(100dvh - var(--topbar-height));
+  background: var(--ground);
+  color: var(--text);
+}
+
+.wrap {
+  width: min(100% - 2.5rem, 84rem);
+  margin-inline: auto;
+}
+
+.section {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1.25rem, 3vw, 3rem);
+  padding-block: clamp(3.5rem, 8vw, 7rem);
+  border-top: 1px solid var(--line);
+}
+
+.pier {
+  grid-column: 1 / span 4;
+}
+
+.pierInner {
+  position: sticky;
+  top: calc(var(--topbar-height) + 2rem);
+}
+
+.content {
+  grid-column: 5 / -1;
+  min-width: 0;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--step-h2);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.sectionNote {
+  max-width: 26ch;
+  margin-top: 0.85rem;
+  color: var(--text-muted);
+  font-size: var(--step-small);
+  line-height: 1.5;
+}
+
+@media (max-width: 64rem) {
+  .pier,
+  .content {
+    grid-column: 1 / -1;
+  }
+
+  .pierInner {
+    position: static;
+    margin-bottom: 2rem;
+  }
+
+  .sectionNote {
+    max-width: 44ch;
+  }
+}
+
+/* ---- Bands: one laterite moment and the closing basalt band ---- */
+
+.band {
+  border-top: 0;
+  padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+  margin-block: clamp(1rem, 3vw, 2rem);
+  border-radius: 4px;
+}
+
+/* A band is its own divider: the section after it needs no rule. */
+.band + .section {
+  border-top: 0;
+}
+
+.laterite {
+  --text: var(--on-laterite);
+  --text-muted: rgb(246 236 228 / 0.78);
+  --line: rgb(246 236 228 / 0.22);
+  --bronze: #f0c98e;
+  --status-pre: #f3cf8a;
+  background: var(--laterite);
+  color: var(--text);
+}
+
+.basalt {
+  --text: var(--on-basalt);
+  --text-muted: #b3ab9f;
+  --line: #3a3632;
+  --bronze: #c9a063;
+  --status-pre: #e2b866;
+  background: var(--basalt);
+  color: var(--text);
+}
+
+/* ---- Text ---- */
+
+.lede {
+  max-width: 34em;
+  font-size: var(--step-lede);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.prose {
+  max-width: 64ch;
+  font-size: var(--step-body);
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.prose > * + * {
+  margin-top: 1em;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+}
+
+.subTitle {
+  font-family: var(--font-display);
+  font-size: var(--step-h3);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+/* ---- Actions ---- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.35rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: var(--font-text);
+  font-size: var(--step-small);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color var(--ui-fast) var(--ease-ui),
+    color var(--ui-fast) var(--ease-ui),
+    border-color var(--ui-fast) var(--ease-ui);
+}
+
+.primary {
+  background: var(--text);
+  color: var(--ground);
+}
+
+.primary:hover {
+  background: var(--bronze);
+  color: var(--ground);
+}
+
+.laterite .primary,
+.basalt .primary {
+  background: var(--text);
+  color: var(--basalt);
+}
+
+.laterite .primary:hover,
+.basalt .primary:hover {
+  background: var(--bronze);
+}
+
+.secondary {
+  border-color: currentColor;
+  background: transparent;
+  color: var(--text);
+}
+
+.secondary:hover {
+  background: var(--text);
+  color: var(--ground);
+}
+
+.laterite .secondary:hover,
+.basalt .secondary:hover {
+  color: var(--basalt);
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--bronze);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+.textLink:hover {
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 30rem) {
+  .actions > .button {
+    flex: 1 1 100%;
+  }
+}

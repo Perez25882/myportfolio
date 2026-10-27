@@ -58,7 +58,7 @@ describe("MuseumExperience", () => {
     render(<MuseumExperience />);
 
     expect(screen.getByText(/Opening the Court… 40%/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Skip to Quick View" })).toHaveAttribute("href", "/quick");
+    expect(screen.getByRole("link", { name: "Skip to the 2D portfolio" })).toHaveAttribute("href", "/quick");
 
     fireEvent.click(await screen.findByRole("button", { name: "court ready" }));
     expect(screen.queryByText(/Opening the Court/)).not.toBeInTheDocument();

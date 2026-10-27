@@ -20,7 +20,8 @@ export type DecisionId =
   | "D8" // FlowDesk film scenario and screenshots
   | "P1-6" // narrative line
   | "Q10" // contact channels
-  | "Q11"; // CV
+  | "Q11" // CV
+  | "S1"; // freelance services and process wording
 
 export interface Claim {
   readonly text: string;

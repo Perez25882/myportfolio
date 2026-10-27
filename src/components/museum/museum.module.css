@@ -176,20 +176,17 @@
 .eyebrow,
 .label {
   color: var(--bronze);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 3vw, 1.8rem);
-  font-stretch: 115%;
-  font-weight: 800;
-  line-height: 1.05;
-  text-transform: uppercase;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .caption {
@@ -340,11 +337,9 @@
   border: 1px solid var(--status-pre);
   border-radius: 2px;
   color: var(--status-pre);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-family: var(--font-text);
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .chat {

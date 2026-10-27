@@ -53,7 +53,7 @@ export function MuseumExperience() {
       <h1 className="visually-hidden">PEREZ museum: guided 3D tour</h1>
       <div className={styles.stage}>
         {contextLost ? (
-          <Fallback message="The 3D view stopped responding. Continue in Quick View, or try again." onRetry={retry} />
+          <Fallback message="The 3D view stopped responding. Continue in the 2D portfolio, or try again." onRetry={retry} />
         ) : (
           <SceneBoundary onRetry={retry}>
             <MuseumCanvas
@@ -101,8 +101,8 @@ function Loader() {
       <div className={styles.loaderTrack} aria-hidden="true">
         <div className={styles.loaderLine} style={{ transform: `scaleX(${progress / 100})` }} />
       </div>
-      {slow ? <p>Taking a while on this connection. The Quick View has everything at a glance.</p> : null}
-      <Link href="/quick">Skip to Quick View</Link>
+      {slow ? <p>Taking a while on this connection. The 2D portfolio has everything at a glance.</p> : null}
+      <Link href="/quick">Skip to the 2D portfolio</Link>
     </div>
   );
 }
@@ -116,7 +116,7 @@ function Fallback({ message, onRetry }: { readonly message: string; readonly onR
           Try again
         </button>
         <Link className={styles.secondary} href="/quick">
-          Quick View
+          2D portfolio
         </Link>
         <Link className={styles.secondary} href="/work/flowdesk">
           FlowDesk case study
@@ -143,7 +143,7 @@ class SceneBoundary extends Component<BoundaryProps, { failed: boolean }> {
     if (this.state.failed) {
       return (
         <Fallback
-          message="The museum's rooms didn't load. Read the FlowDesk case study or the Quick View instead."
+          message="The museum's rooms didn't load. Read the FlowDesk case study or the 2D portfolio instead."
           onRetry={() => {
             this.setState({ failed: false });
             this.props.onRetry();

@@ -10,11 +10,9 @@
   border: 0;
   background: transparent;
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-family: var(--font-text);
+  font-size: var(--step-small);
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   transition: color var(--ui-fast) var(--ease-ui);
 }
 

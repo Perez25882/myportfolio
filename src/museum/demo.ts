@@ -122,3 +122,21 @@ export function totalOf(record: OrderRecord): number | undefined {
 export function orderRecorded(progress: DemoProgress): boolean {
   return recordAt(progress).order !== undefined;
 }
+
+const ghs = (value: number) => `GHS ${value}`;
+
+/** The order record as label and value rows, leaving out what the conversation hasn't reached yet. */
+export function recordRows(record: OrderRecord): readonly (readonly [string, string])[] {
+  const total = totalOf(record);
+  const rows: readonly (readonly [string, string | undefined])[] = [
+    ["Item", record.item],
+    ["Quantity", record.quantity?.toString()],
+    ["Unit price", record.unitPrice !== undefined ? ghs(record.unitPrice) : undefined],
+    ["Total", total !== undefined ? ghs(total) : undefined],
+    ["Offer", record.offered !== undefined ? `${ghs(record.offered)} each` : undefined],
+    ["Price check", record.verdict && record.ladder ? `${record.verdict} (ladder: ${record.ladder.map(ghs).join(" → ")})` : undefined],
+    ["Order", record.order],
+    ["Payment", record.payment],
+  ];
+  return rows.filter((row): row is readonly [string, string] => row[1] !== undefined);
+}

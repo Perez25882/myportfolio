@@ -1,11 +1,9 @@
 "use client";
 
 import { flowdeskCaseStudy } from "@/content/flowdesk";
-import { currentStep, messagesAt, nextStep, recordAt, totalOf, type OrderRecord } from "@/museum/demo";
+import { currentStep, messagesAt, nextStep, recordAt, recordRows, type OrderRecord } from "@/museum/demo";
 import { useMuseumStore } from "@/store/museum";
 import styles from "./museum.module.css";
-
-const ghs = (value: number) => `GHS ${value}`;
 
 /** The scripted FlowDesk conversation, what FlowDesk did with each message, and the record it built. */
 export function DemoPanel() {
@@ -70,32 +68,18 @@ export function DemoPanel() {
 }
 
 function RecordCard({ record }: { readonly record: OrderRecord }) {
-  const total = totalOf(record);
-  const rows: [string, string | undefined][] = [
-    ["Item", record.item],
-    ["Quantity", record.quantity?.toString()],
-    ["Unit price", record.unitPrice !== undefined ? ghs(record.unitPrice) : undefined],
-    ["Total", total !== undefined ? ghs(total) : undefined],
-    ["Offer", record.offered !== undefined ? `${ghs(record.offered)} each` : undefined],
-    ["Price check", record.verdict && record.ladder ? `${record.verdict} (ladder: ${record.ladder.map(ghs).join(" → ")})` : undefined],
-    ["Order", record.order],
-    ["Payment", record.payment],
-  ];
-
   return (
     <section className={styles.record} aria-labelledby="record-title">
       <h3 id="record-title" className={styles.label}>
         Order record
       </h3>
       <dl>
-        {rows
-          .filter(([, value]) => value !== undefined)
-          .map(([term, value]) => (
-            <div key={term}>
-              <dt>{term}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
+        {recordRows(record).map(([term, value]) => (
+          <div key={term}>
+            <dt>{term}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
       </dl>
     </section>
   );

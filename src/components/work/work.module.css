@@ -1,0 +1,146 @@
+/* Project visuals: each sits on its project's accent colour, like an exhibit on its plinth. */
+
+.visual {
+  --on-accent: #f6f2ec;
+}
+
+.mat {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.plate .mat {
+  padding: clamp(1.25rem, 4vw, 3rem);
+}
+
+.hero .mat {
+  padding: clamp(1.5rem, 5vw, 4.5rem);
+}
+
+/* Room between a case study's visual caption and the first section rule. */
+.visual.hero {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.caption {
+  max-width: 62ch;
+  margin-top: 0.75rem;
+  color: var(--text-muted);
+  font-size: var(--step-caption);
+  line-height: 1.5;
+}
+
+/* ---- FlowDesk: the owner's board with the customer's phone in front of it ---- */
+
+.flowdesk {
+  position: relative;
+  padding: 0 0 8% 22%;
+}
+
+.board {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.28);
+}
+
+.phone {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 27%;
+  height: auto;
+  border: 6px solid #0d1513;
+  border-radius: 14px;
+  box-shadow: 0 22px 44px rgb(0 0 0 / 0.38);
+}
+
+/* ---- JoyDataBundle: the live site ---- */
+
+.screenshot {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.25);
+}
+
+/* ---- Diagrams (HTML, so the words stay readable on a phone) ---- */
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  list-style: none;
+  counter-reset: none;
+}
+
+.node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-top: 1rem;
+  border-top: 2px solid rgb(246 242 236 / 0.85);
+  font-size: var(--step-small);
+  line-height: 1.5;
+}
+
+/* The arrow between steps: a real direction of travel, so it is drawn. */
+.node:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  right: calc(-1 * clamp(1.5rem, 3vw, 2.5rem) + 2px);
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid rgb(246 242 236 / 0.85);
+  border-right: 2px solid rgb(246 242 236 / 0.85);
+  transform: rotate(45deg);
+}
+
+.nodeTitle {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.keys {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-block: 0.2rem;
+}
+
+.keys > span {
+  align-self: flex-start;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgb(246 242 236 / 0.45);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.figure {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+@media (max-width: 40rem) {
+  .flow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .node:not(:last-child)::after {
+    top: auto;
+    right: auto;
+    bottom: calc(-1 * clamp(1.5rem, 3vw, 2.5rem) + 4px);
+    left: 2px;
+    transform: rotate(135deg);
+  }
+}

@@ -1,19 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, JetBrains_Mono, Newsreader, Public_Sans } from "next/font/google";
+import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import { ContactSheet } from "@/components/ContactSheet";
 import { TopBar } from "@/components/TopBar";
 import { profile } from "@/content/profile";
 import "./globals.css";
 
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
-const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-public-sans", display: "swap" });
-const newsreader = Newsreader({
+// Two families carry the whole site (2D and 3D): Poppins for headings and the wordmark, Inter for
+// reading. JetBrains Mono appears only for real technical names. next/font self-hosts all three.
+const poppins = Poppins({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-newsreader",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
   display: "swap",
 });
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains-mono", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400"], variable: "--font-jetbrains-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +30,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  const fontVariables = [archivo, publicSans, newsreader, jetbrainsMono].map((font) => font.variable).join(" ");
+  const fontVariables = [poppins, inter, jetbrainsMono].map((font) => font.variable).join(" ");
 
   return (
     <html lang="en" className={fontVariables}>

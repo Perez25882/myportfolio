@@ -129,7 +129,7 @@ export function TourPanel() {
             ))}
           </ol>
           <Link className={styles.leave} href="/quick">
-            Leave 3D · Quick View
+            Leave 3D: open the portfolio
           </Link>
         </div>
       ) : null}

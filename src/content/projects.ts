@@ -71,6 +71,7 @@ export const projects: readonly Project[] = [
     links: [{ label: "Repository", href: `${GH}/ledmi_os` }],
     withheldLinks: [],
     pending: ["D1"],
+    caseStudyHref: "/work/ledgermind",
   },
   {
     slug: "accra-we-dey",
@@ -97,6 +98,7 @@ export const projects: readonly Project[] = [
     links: [],
     withheldLinks: [{ label: "Repository", reason: "D5" }],
     pending: ["D5"],
+    caseStudyHref: "/work/accra-we-dey",
   },
   {
     slug: "joydatabundle",
@@ -126,6 +128,7 @@ export const projects: readonly Project[] = [
     ],
     withheldLinks: [],
     pending: ["D1"],
+    caseStudyHref: "/work/joydatabundle",
   },
 ];
 

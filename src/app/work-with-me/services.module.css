@@ -1,0 +1,215 @@
+/* Work with me. Layout primitives live in components/editorial. */
+
+.hero {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 54rem;
+  padding-block: clamp(3rem, 8vw, 6.5rem) clamp(3rem, 6vw, 4.5rem);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--step-hero);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.lede {
+  max-width: 32em;
+}
+
+/* ---- Services ---- */
+
+.services {
+  list-style: none;
+}
+
+.service {
+  display: grid;
+  grid-template-columns: minmax(11rem, 0.8fr) minmax(0, 2fr);
+  column-gap: 2rem;
+  row-gap: 0.5rem;
+  padding-block: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+
+.serviceName {
+  font-family: var(--font-display);
+  font-size: var(--step-h3);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.summary {
+  max-width: 52ch;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+  margin-top: 0.75rem;
+  color: var(--text-muted);
+  font-size: var(--step-small);
+  list-style: none;
+}
+
+.includes li {
+  position: relative;
+  padding-left: 0.9rem;
+}
+
+.includes li::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--bronze);
+}
+
+.evidence {
+  margin-top: 0.75rem;
+  font-size: var(--step-small);
+}
+
+.evidence a {
+  color: var(--bronze);
+  font-weight: 600;
+  text-decoration-thickness: 1px;
+}
+
+@media (max-width: 48rem) {
+  .service {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Process: a real sequence, so the steps are numbered ---- */
+
+.process {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 3rem;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  counter-increment: step;
+  padding-top: 1rem;
+  border-top: 2px solid var(--text);
+}
+
+.step::before {
+  content: counter(step);
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--bronze);
+  font-family: var(--font-display);
+  font-size: var(--step-h2);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.stepTitle {
+  margin-bottom: 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.step p {
+  max-width: 44ch;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 40rem) {
+  .process {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Proof ---- */
+
+.proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  list-style: none;
+}
+
+.proofLink {
+  display: grid;
+  gap: 0.4rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.proofImage {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  aspect-ratio: 4 / 3;
+  background: var(--basalt);
+}
+
+.proofImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms var(--ease-ui);
+}
+
+.proofLink:hover .proofImage img {
+  transform: scale(1.03);
+}
+
+.proofTitle {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--ui-duration) var(--ease-ui);
+}
+
+.proofLink:hover .proofTitle,
+.proofLink:focus-visible .proofTitle {
+  text-decoration-color: var(--bronze);
+}
+
+.proofDetail {
+  color: var(--text-muted);
+  font-size: var(--step-small);
+  line-height: 1.5;
+}
+
+@media (max-width: 48rem) {
+  .proof {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Ready ---- */
+
+.ready {
+  display: grid;
+  gap: 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.closing {
+  margin-top: 2rem;
+}

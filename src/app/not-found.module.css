@@ -1,0 +1,38 @@
+/* 404: the museum's dark ground, one clear statement, three ways on. */
+
+.page {
+  display: grid;
+  align-items: center;
+  min-height: calc(100dvh - var(--topbar-height));
+  background: var(--ground);
+  color: var(--text);
+}
+
+.inner {
+  width: min(100% - 2.5rem, 52rem);
+  margin-inline: auto;
+  padding-block: clamp(3rem, 10vw, 7rem);
+}
+
+.code {
+  color: var(--bronze);
+  font-family: var(--font-display);
+  font-size: var(--step-small);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  margin-top: 0.75rem;
+  font-family: var(--font-display);
+  font-size: var(--step-h1);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.lede {
+  margin-block: 1.25rem 2rem;
+  color: var(--text-muted);
+}

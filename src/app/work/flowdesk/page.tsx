@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { CaptionToggle } from "@/components/CaptionToggle";
 import { ReviewMarker } from "@/components/ReviewMarker";
 import { StatusChip, verificationChip } from "@/components/StatusChip";
 import { StrataList } from "@/components/StrataList";
+import { Section } from "@/components/editorial/Section";
+import ed from "@/components/editorial/editorial.module.css";
+import { CaseHero, NextProject } from "@/components/work/CaseStudy";
+import { ConversationDemo } from "@/components/work/ConversationDemo";
+import caseStyles from "@/components/work/case.module.css";
 import { flowdeskCaseStudy } from "@/content/flowdesk";
 import { getProject } from "@/content/projects";
 import styles from "./flowdesk.module.css";
@@ -15,85 +21,75 @@ export const metadata: Metadata = {
   description: project?.purpose,
 };
 
-/** FlowDesk case study: the HTML mirror of the FlowDesk exhibition room. */
+/** FlowDesk case study: the 2D mirror of the FlowDesk room, with the demonstration playable here. */
 export default function FlowDeskPage() {
   if (!project) throw new Error("FlowDesk is missing from the content register");
 
   return (
-    <article className={styles.page} aria-labelledby="flowdesk-title">
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Exhibit · {project.exhibitTitle}</p>
-        <h1 id="flowdesk-title" className={styles.title}>
-          {project.name}
-        </h1>
-        <p className={styles.lede}>{project.purpose}</p>
-        <div className={styles.meta}>
-          <StatusChip kind={project.status} />
-          <span>{flowdeskCaseStudy.statusNote}</span>
-        </div>
-        <p className={styles.role}>
-          Role: {project.role}
-          <ReviewMarker decisions={project.pending.filter((id) => id === "D1")} />
-        </p>
-      </header>
+    <article data-theme="light" className={ed.page} aria-labelledby="case-title">
+      <div className={ed.wrap}>
+        <CaseHero project={project} status={flowdeskCaseStudy.statusNote} />
 
-      <section aria-labelledby="problem-title" className={styles.section}>
-        <h2 id="problem-title" className={styles.heading}>
-          The problem
-        </h2>
-        <p>{flowdeskCaseStudy.problem}</p>
-        <p>{flowdeskCaseStudy.answer}</p>
-      </section>
+        <Section id="problem" title="The problem">
+          <h3 className={caseStyles.openingTitle}>Orders, haggling and payment proof get lost in chat threads</h3>
+          <div className={ed.prose}>
+            <p>{flowdeskCaseStudy.problem}</p>
+            <p>{flowdeskCaseStudy.answer}</p>
+          </div>
+        </Section>
 
-      <section aria-labelledby="beneath-title" className={styles.section}>
-        <div className={styles.sectionHead}>
-          <h2 id="beneath-title" className={styles.heading}>
-            Look beneath the surface
-          </h2>
-          <CaptionToggle />
-        </div>
-        <p className={styles.muted}>
-          Seven layers, from a WhatsApp message arriving to an order on the shop&apos;s board.
-        </p>
-        <StrataList strata={flowdeskCaseStudy.strata} />
-        <blockquote className={styles.thesis}>{flowdeskCaseStudy.thesis}</blockquote>
-      </section>
+        <Section
+          id="demo"
+          title="Play the customer"
+          note="Send the customer's messages and watch what FlowDesk does with each one."
+        >
+          <ConversationDemo />
+        </Section>
 
-      <section aria-labelledby="demo-title" className={styles.section}>
-        <h2 id="demo-title" className={styles.heading}>
-          The demonstration
-        </h2>
-        <p>
-          A scripted simulation arrives with the FlowDesk room: a customer orders, FlowDesk identifies the products, the
-          customer offers less, the shop&apos;s price floor holds, and the order is recorded. It is a simulation, not a
-          live WhatsApp connection.
-        </p>
-      </section>
+        <Section id="beneath" title="Look beneath the surface" note="Seven layers, in the order a message passes through them.">
+          <div className={styles.beneathHead}>
+            <CaptionToggle />
+          </div>
+          <StrataList strata={flowdeskCaseStudy.strata} />
+          <blockquote className={styles.thesis}>
+            <p>{flowdeskCaseStudy.thesis}</p>
+          </blockquote>
+        </Section>
 
-      <section aria-labelledby="evidence-title" className={styles.section}>
-        <h2 id="evidence-title" className={styles.heading}>
-          Evidence
-        </h2>
-        <ul className={styles.evidence}>
-          {project.highlights.map((claim) => {
-            const chip = verificationChip(claim.verification);
-            return (
-              <li key={claim.text}>
-                {claim.text} {chip ? <StatusChip kind={chip} /> : null}
-              </li>
-            );
-          })}
-        </ul>
-        <p className={styles.muted}>
-          The repository link will be added once a setup document with private details has been cleaned.
-          <ReviewMarker decisions={["D3"]} />
-        </p>
-      </section>
+        <Section id="evidence" title="Evidence" note="Checked in the repository. The repository itself isn't linked yet.">
+          <ul className={styles.evidence}>
+            {project.highlights.map((claim) => {
+              const chip = verificationChip(claim.verification);
+              return (
+                <li key={claim.text}>
+                  {claim.text} {chip ? <StatusChip kind={chip} /> : null}
+                </li>
+              );
+            })}
+          </ul>
+          <p className={`${ed.muted} ${styles.withheld}`}>
+            The repository link will be added once a setup document with private details has been cleaned.
+            <ReviewMarker decisions={["D3"]} />
+          </p>
+        </Section>
 
-      <nav aria-label="Case study" className={styles.nav}>
-        <Link href="/quick#work">← All selected work</Link>
-        <Link href="/museum">Enter the museum</Link>
-      </nav>
+        <Section id="exhibit" title="In the museum" note="FlowDesk is also a room in the 3D museum.">
+          <figure className={styles.exhibit}>
+            <Image
+              src="/images/work/flowdesk-exhibit.webp"
+              alt="The FlowDesk room in the museum: a basalt pipeline table with bronze stations, and the owner's board on the far wall."
+              width={960}
+              height={540}
+              sizes="(max-width: 64rem) 92vw, 60vw"
+            />
+            <figcaption className={ed.muted}>
+              The pipeline table, rendered in Blender. <Link href="/museum?stop=hall">Walk the room in 3D</Link>
+            </figcaption>
+          </figure>
+        </Section>
+
+        <NextProject slug="flowdesk" />
+      </div>
     </article>
   );
 }

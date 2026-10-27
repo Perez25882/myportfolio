@@ -36,11 +36,11 @@ export function MuseumGate() {
     return (
       <div className="page">
         <div className={styles.panel} role="alert">
-          <h1 className={styles.title}>Quick View instead</h1>
+          <h1 className={styles.title}>The 2D portfolio instead</h1>
           <p>This device can&apos;t show the 3D museum, so here&apos;s everything at a glance.</p>
           <div className={styles.actions}>
             <Link className={styles.primary} href="/quick">
-              Open Quick View
+              Open the portfolio
             </Link>
             <Link className={styles.secondary} href="/work/flowdesk">
               FlowDesk case study

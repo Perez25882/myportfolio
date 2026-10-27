@@ -13,10 +13,26 @@
   --status-pre: #e2b866;
   --status-team: #9cc0e0;
 
-  --font-display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
-  --font-text: var(--font-public-sans), "Segoe UI", system-ui, sans-serif;
-  --font-narrative: var(--font-newsreader), Georgia, serif;
+  --font-display: var(--font-poppins), "Segoe UI", system-ui, sans-serif;
+  --font-text: var(--font-inter), "Segoe UI", system-ui, sans-serif;
+  --font-narrative: var(--font-poppins), "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, Consolas, monospace;
+
+  /* Type scale (fluid, roughly a 1.25 ratio). One size per role; pages don't invent their own. */
+  --step-hero: clamp(2.6rem, 1.4rem + 5.2vw, 5.75rem);
+  --step-h1: clamp(2.2rem, 1.5rem + 3vw, 3.75rem);
+  --step-h2: clamp(1.65rem, 1.25rem + 1.6vw, 2.5rem);
+  --step-h3: clamp(1.3rem, 1.1rem + 0.8vw, 1.75rem);
+  --step-lede: clamp(1.1rem, 1rem + 0.45vw, 1.3rem);
+  --step-body: 1.0625rem;
+  --step-small: 0.9375rem;
+  --step-caption: 0.8125rem;
+
+  /* Earth tones shared by every theme. */
+  --laterite: #74432e;
+  --on-laterite: #f6ece4;
+  --basalt: #1e1c1a;
+  --on-basalt: #ede7dd;
 
   --topbar-height: 56px;
   --ui-fast: 160ms;
@@ -26,12 +42,13 @@
   color-scheme: dark;
 }
 
+/* "Plaster and basalt": the 2D portfolio's light theme, from the courtyard's materials. */
 [data-theme="light"] {
-  --ground: #f3efe8;
-  --surface: #fbf8f3;
-  --text: #1a1816;
-  --text-muted: #5e574e;
-  --line: #ddd5c9;
+  --ground: #eee9e1;
+  --surface: #f7f4ef;
+  --text: #1e1c1a;
+  --text-muted: #5b544c;
+  --line: #d6ccbf;
   /* Darker than the spec's #8A6A3A so light text on bronze buttons clears 4.5:1. */
   --bronze: #7a5c30;
   --on-bronze: #fbf8f3;
