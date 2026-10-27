@@ -1,0 +1,32 @@
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.option {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color var(--ui-fast) var(--ease-ui);
+}
+
+.option + .option {
+  border-left: 1px solid var(--line);
+}
+
+.option[aria-pressed="true"] {
+  background: var(--bronze);
+  color: var(--on-bronze);
+}
+
+.option:hover:not([aria-pressed="true"]) {
+  color: var(--text);
+}

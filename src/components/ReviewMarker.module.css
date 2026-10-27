@@ -1,0 +1,17 @@
+.marker {
+  display: inline-block;
+  margin-inline-start: 0.5rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px dashed var(--status-pre);
+  border-radius: 2px;
+  color: var(--status-pre);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}

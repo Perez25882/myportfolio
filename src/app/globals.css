@@ -1,0 +1,144 @@
+/* Design tokens from design/phase-1/07-design-system.md. Dark is the museum default; Quick View opts into light. */
+:root {
+  --ground: #141312;
+  --surface: #1d1b19;
+  --text: #ede7dd;
+  --text-muted: #9c958a;
+  --line: #2e2b27;
+  --bronze: #c9a063;
+  --on-bronze: #141312;
+  --seam: #ffd9ae;
+  --dawn: #c98a5b;
+  --status-live: #8fc79a;
+  --status-pre: #e2b866;
+  --status-team: #9cc0e0;
+
+  --font-display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
+  --font-text: var(--font-public-sans), "Segoe UI", system-ui, sans-serif;
+  --font-narrative: var(--font-newsreader), Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, Consolas, monospace;
+
+  --topbar-height: 56px;
+  --ui-fast: 160ms;
+  --ui-duration: 240ms;
+  --ease-ui: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --ground: #f3efe8;
+  --surface: #fbf8f3;
+  --text: #1a1816;
+  --text-muted: #5e574e;
+  --line: #ddd5c9;
+  /* Darker than the spec's #8A6A3A so light text on bronze buttons clears 4.5:1. */
+  --bronze: #7a5c30;
+  --on-bronze: #fbf8f3;
+  --seam: #b7864a;
+  --status-live: #2f6b3b;
+  --status-pre: #8a5a10;
+  --status-team: #2d5378;
+
+  color-scheme: light;
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --topbar-height: 52px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--topbar-height) + 1rem);
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 50;
+  padding: 0.75rem 1rem;
+  background: var(--bronze);
+  color: var(--on-bronze);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Simple padded column for interstitial pages. */
+.page {
+  width: min(100% - 2rem, 60rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 5rem) 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --line: #6b655c;
+    --text-muted: #c9c2b6;
+  }
+}

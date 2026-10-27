@@ -1,0 +1,8 @@
+{
+  "$comment": "Mobile budgets from design/phase-1/06-technical-art-plan.md §3. Revisit only after device profiling.",
+  "rooms": {
+    "court": { "maxBytes": 1500000, "maxTriangles": 150000, "maxDrawCalls": 60, "maxTextureMB": 40 },
+    "flowdesk": { "maxBytes": 1200000, "maxTriangles": 120000, "maxDrawCalls": 40, "maxTextureMB": 32 }
+  },
+  "resident": { "maxTriangles": 300000, "maxDrawCalls": 100, "maxTextureMB": 128 }
+}
