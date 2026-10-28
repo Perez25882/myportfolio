@@ -1,0 +1,12 @@
+# Uploaded to Vercel: only what the site builds from. The Blender sources and bakes, the
+# planning documents and the model/environment tooling stay in the repository, not the deploy.
+blender/
+design/
+docs/
+pipeline/
+tools/
+coverage/
+.next/
+node_modules/
+*.blend
+*.blend1
