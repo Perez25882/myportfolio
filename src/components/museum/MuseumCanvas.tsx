@@ -1,79 +1,27 @@
 "use client";
 
-import { PerformanceMonitor, useGLTF } from "@react-three/drei";
+import { PerformanceMonitor } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
+import { type Object3D, type PerspectiveCamera, Vector3 } from "three";
 import {
-  MeshBasicMaterial,
-  MeshStandardMaterial,
-  PMREMGenerator,
-  type Mesh,
-  type Object3D,
-  type PerspectiveCamera,
-  type WebGLRenderer,
-  Vector3,
-} from "three";
-import type { KTX2Loader as StdlibKTX2Loader } from "three-stdlib";
-// three's own loader: it matches the r186 Basis transcoder served from /basis/. three-stdlib's
-// older loader speaks a different worker protocol and hangs silently with this transcoder.
-import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+  BronzeEnvironment,
+  COURT_URL,
+  FLOWDESK_URL,
+  Ground,
+  SKY,
+  restPosition,
+  useBakedScene,
+  useCompiledScene,
+} from "@/components/three/baked";
 import { STALL_MS, type FrameSample, type RendererInfo } from "@/museum/benchmark";
 import { orderRecorded } from "@/museum/demo";
 import { STOPS, poseFor, type Stop } from "@/museum/stops";
 import { useMuseumStore } from "@/store/museum";
 
-const COURT_URL = "/models/court.glb";
-const FLOWDESK_URL = "/models/flowdesk.glb";
-const BASIS_TRANSCODER = "/basis/";
-// Blender drives the bronze's roughness from a brushed-grain node that glTF cannot carry,
-// so the export falls back to 1.0 (chalk). This is the cast finish approved in F2.
-const BRONZE_ROUGHNESS = 0.38;
-const SCREEN_ANISOTROPY = 8;
-
-// One KTX2 loader for the page: it owns the Basis transcoder worker pool.
-let ktx2Loader: KTX2Loader | null = null;
-function getKtx2Loader(gl: WebGLRenderer): KTX2Loader {
-  ktx2Loader ??= new KTX2Loader().setTranscoderPath(BASIS_TRANSCODER).detectSupport(gl);
-  return ktx2Loader;
-}
-const SKY = "#a9c1d8";
-const GROUND = "#8c7b66";
 const CAMERA_EASE = 3; // per second: about 1.5 s to settle
 const MAX_DPR_TOUCH = 1.5;
 const MAX_DPR_DESKTOP = 2;
-
-/**
- * Lighting is baked into each room's texture atlas, so every surface is drawn
- * unlit. MeshBasicMaterial is the cheapest material three.js has, which is
- * what keeps mid-range phones at frame rate.
- */
-function useBakedScene(url: string): Object3D {
-  const gl = useThree((state) => state.gl);
-  const { scene } = useGLTF(url, false, true, (loader) => {
-    // drei's GLTFLoader (three-stdlib) only calls load() on it, which both classes share.
-    loader.setKTX2Loader(getKtx2Loader(gl) as unknown as StdlibKTX2Loader);
-  });
-  return useMemo(() => {
-    scene.traverse((node) => {
-      const mesh = node as Mesh;
-      if (!mesh.isMesh) return;
-      const source = mesh.material as MeshStandardMaterial;
-      // The interface displays are read at an angle: anisotropic filtering keeps their text sharp.
-      if (source.name.startsWith("M_screen_") && source.map) {
-        source.map.anisotropy = Math.min(SCREEN_ANISOTROPY, gl.capabilities.getMaxAnisotropy());
-      }
-      // The Code Monument's bronze is the one real-time material: metal needs reflections, not a bake.
-      mesh.material =
-        source.metalness > 0.5 && !source.map
-          ? new MeshStandardMaterial({ color: source.color, metalness: 1, roughness: BRONZE_ROUGHNESS })
-          : new MeshBasicMaterial({ map: source.map ?? null });
-      mesh.matrixAutoUpdate = false;
-      mesh.updateMatrix();
-    });
-    return scene;
-  }, [scene, gl]);
-}
 
 const SEAM_OPENING = 0.35; // metres each cast half moves along the seam
 
@@ -94,7 +42,7 @@ function Court({ onReady, reducedMotion }: { readonly onReady: () => void; reado
     const found: { node: Object3D; base: Vector3; direction: number }[] = [];
     scene.traverse((node) => {
       if (!node.name.startsWith("CT_monument_")) return;
-      found.push({ node, base: node.position.clone(), direction: node.name.includes("_front") ? 1 : -1 });
+      found.push({ node, base: restPosition(node), direction: node.name.includes("_front") ? 1 : -1 });
     });
     return found;
   }, [scene]);
@@ -112,37 +60,6 @@ function Court({ onReady, reducedMotion }: { readonly onReady: () => void; reado
   });
 
   return <primitive object={scene} visible={compiled} />;
-}
-
-/**
- * Compiles a room's shaders without blocking the main thread (KHR_parallel_shader_compile,
- * where the browser has it) and uploads its textures, then reports true. Until then the room
- * stays hidden: a synchronous first-frame compile froze this laptop for 2.5 s, and is the
- * leading suspect for the Phase 2 iPhone freeze. The root scene is passed so the programs
- * match the real render (its reflection environment included).
- */
-function useCompiledScene(scene: Object3D): boolean {
-  const gl = useThree((state) => state.gl);
-  const camera = useThree((state) => state.camera);
-  const root = useThree((state) => state.scene);
-  const [compiledScene, setCompiledScene] = useState<Object3D | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    gl.compileAsync(scene, camera, root).then(() => {
-      if (cancelled) return;
-      scene.traverse((node) => {
-        const map = ((node as Mesh).material as MeshBasicMaterial | undefined)?.map;
-        if (map) gl.initTexture(map);
-      });
-      setCompiledScene(scene);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [scene, gl, camera, root]);
-
-  return compiledScene === scene;
 }
 
 // FlowDesk parts that move with the demonstration (names from blender/scripts/rooms/flowdesk.py).
@@ -179,7 +96,7 @@ function FlowDesk({ onReady, reducedMotion }: { readonly onReady: () => void; re
     const found: { prefix: RuntimePart; node: Object3D; base: Vector3 }[] = [];
     scene.traverse((node) => {
       const prefix = RUNTIME_PARTS.find((name) => node.name.startsWith(name));
-      if (prefix && !found.some((part) => part.prefix === prefix)) found.push({ prefix, node, base: node.position.clone() });
+      if (prefix && !found.some((part) => part.prefix === prefix)) found.push({ prefix, node, base: restPosition(node) });
     });
     return found;
   }, [scene]);
@@ -202,23 +119,6 @@ function FlowDesk({ onReady, reducedMotion }: { readonly onReady: () => void; re
   });
 
   return <primitive object={scene} visible={compiled} />;
-}
-
-function Ground() {
-  return (
-    <mesh rotation-x={-Math.PI / 2} position-y={-0.32}>
-      <planeGeometry args={[240, 240]} />
-      <meshBasicMaterial color={GROUND} />
-    </mesh>
-  );
-}
-
-/** Reflections for the bronze: a small procedural room environment, prefiltered once. */
-function BronzeEnvironment() {
-  const gl = useThree((state) => state.gl);
-  const texture = useMemo(() => new PMREMGenerator(gl).fromScene(new RoomEnvironment(), 0.04).texture, [gl]);
-  useEffect(() => () => texture.dispose(), [texture]);
-  return <primitive object={texture} attach="environment" />;
 }
 
 /** Eases the camera to the current stop's pose; cuts instantly for reduced motion or distant jumps. */

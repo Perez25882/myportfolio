@@ -4,7 +4,13 @@ export const profile = {
   name: "Perez Tegbey",
   wordmark: "PEREZ",
   museumName: "Museum of What's Possible",
-  /** From the approved concept image; wording not yet confirmed (P1-6). */
+  /** Founder-supplied in the immersive-experience directive of 2026-10-27. */
+  headline: "I build ideas into things that work.",
+  role: "Software developer and product builder",
+  location: "Accra, Ghana",
+  education: "Computer Science graduate",
+  interests: ["Software engineering", "Product development", "Cybersecurity", "Interactive experiences"],
+  /** From the approved concept image; confirmed in the immersive-experience directive of 2026-10-27 (P1-6). */
   narrativeLine: ["Curiosity made me explore.", "Ambition made me build."],
   intro:
     "An interactive 3D portfolio of real projects, technical depth and a journey towards what's next.",
@@ -26,7 +32,7 @@ export const profile = {
   },
   intents: ["Employment", "Freelance", "Collaboration"],
   pending: {
-    narrativeLine: ["P1-6"],
+    narrativeLine: [],
     roleLine: ["D6"],
     whatIBuild: ["D6"],
     contact: ["Q10", "Q11"],

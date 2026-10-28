@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { formatMonth } from "@/lib/format";
-import ArrivalPage from "./page";
+import HomePage from "./page";
 import NotFound from "./not-found";
 import FlowDeskPage from "./work/flowdesk/page";
 
@@ -9,15 +9,56 @@ import FlowDeskPage from "./work/flowdesk/page";
 vi.mock("@/components/museum/MuseumExperience", () => ({
   MuseumExperience: () => <p>3D museum experience</p>,
 }));
+vi.mock("@/components/journey/JourneyCanvas", () => ({ default: () => null }));
 
-describe("Arrival", () => {
-  it("offers the museum and the 2D portfolio from the first screen", () => {
-    render(<ArrivalPage />);
+describe("Home journey", () => {
+  it("opens with the name, the headline and ways to skip ahead", () => {
+    render(<HomePage />);
 
     expect(screen.getByRole("heading", { level: 1, name: /PEREZ/ })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Enter Museum/ })).toHaveAttribute("href", "/museum");
-    expect(screen.getByRole("link", { name: "View portfolio" })).toHaveAttribute("href", "/quick");
-    expect(screen.getByRole("navigation", { name: "Sections" })).toBeInTheDocument();
+    expect(screen.getByText("I build ideas into things that work.")).toBeInTheDocument();
+    const jump = screen.getByRole("navigation", { name: "Jump to" });
+    expect(within(jump).getByRole("link", { name: "See the projects" })).toHaveAttribute("href", "#flowdesk");
+    expect(within(jump).getByRole("link", { name: "Services" })).toHaveAttribute("href", "#services");
+    expect(within(jump).getByRole("button", { name: "Contact" })).toBeInTheDocument();
+    expect(within(jump).getByRole("link", { name: "2D portfolio" })).toHaveAttribute("href", "/quick");
+  });
+
+  it("links every chapter from the rail, each to a section that exists", () => {
+    const { container } = render(<HomePage />);
+
+    const links = within(screen.getByRole("navigation", { name: "Chapters" })).getAllByRole("link");
+    expect(links).toHaveLength(10);
+    for (const link of links) {
+      const id = link.getAttribute("href")?.slice(1) ?? "";
+      expect(container.querySelector(`section#${id}`)).not.toBeNull();
+    }
+  });
+
+  it("tells all four projects in page text, each with its case study", () => {
+    render(<HomePage />);
+
+    for (const name of ["FlowDesk", "LedgerMind OS", "Accra We Dey", "JoyDataBundle"]) {
+      expect(screen.getByRole("heading", { level: 2, name })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: `Read the ${name} case study` })).toBeInTheDocument();
+    }
+    expect(screen.getByText(/not the game's own map or art/)).toBeInTheDocument();
+    expect(screen.getByText(/The backend was built by a teammate/)).toBeInTheDocument();
+  });
+
+  it("ends with a working contact finale in plain HTML", () => {
+    render(<HomePage />);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Let's build something together." })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Contact Perez" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /GitHub/ })).toHaveAttribute("href", "https://github.com/Perez25882");
+    expect(screen.getByText("Have a project in mind? Let's build it.")).toBeInTheDocument();
+  });
+
+  it("falls back to the flat layout when WebGL is unavailable", async () => {
+    const { container } = render(<HomePage />);
+
+    await vi.waitFor(() => expect(container.firstElementChild).toHaveAttribute("data-mode", "flat"));
   });
 });
 

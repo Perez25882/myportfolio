@@ -1,0 +1,665 @@
+/*
+ * The scroll journey on the home page. The canvas is fixed behind the page; chapters scroll
+ * over it, each as tall as its stretch of the camera path, with text panels that hold still.
+ * data-mode on the root: "pending" and "3d" lay chapters out for the scene; "flat" (no WebGL)
+ * stacks them as an ordinary page with pictures.
+ */
+
+.journey {
+  position: relative;
+  isolation: isolate;
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --panel-width: min(27.5rem, 40vw);
+  --charcoal: #1e1c1a;
+}
+
+/* ---- The stage: canvas, poster and veil ---- */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #a9c1d8;
+}
+
+.stage canvas {
+  display: block;
+}
+
+.poster {
+  position: absolute;
+  inset: 0;
+  transition: opacity 700ms var(--ease-ui);
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 50%;
+}
+
+.posterGone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Covers each change of world; its opacity is set by the camera rig. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: var(--basalt);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- Chapters, beats and panels ---- */
+
+.chapter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(var(--length) * 100svh);
+}
+
+.beat {
+  position: relative;
+  /* Equal shares of the chapter, whatever each panel holds: the camera's keys are timed to them. */
+  flex: 1 1 0;
+  padding: 14svh var(--gutter) 6svh;
+}
+
+.panel {
+  position: sticky;
+  top: calc(var(--topbar-height) + 9svh);
+  width: var(--panel-width);
+  padding: 1.6rem 1.75rem 1.75rem;
+  border-radius: 3px;
+  background: rgb(247 244 239 / 0.97);
+  box-shadow:
+    0 1px 0 rgb(30 28 26 / 0.06),
+    0 24px 48px -28px rgb(20 19 18 / 0.55);
+  color: var(--text);
+  font-size: var(--step-body);
+  line-height: 1.6;
+}
+
+/* The seam from the wordmark and the monument, as a short cut at the panel's head. */
+.panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.75rem;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--seam);
+}
+
+.panelDark {
+  background: rgb(30 28 26 / 0.9);
+  color: var(--on-basalt);
+}
+
+.panel p + p,
+.panel p + ol,
+.panel p + ul,
+.panel ol + p,
+.panel ul + p,
+.panel dl + p {
+  margin-top: 0.8rem;
+}
+
+/* A keyboard user can always read what they have reached, even mid-entrance. */
+.panel:focus-within {
+  opacity: 1 !important;
+}
+
+.bare {
+  position: relative;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--step-h2);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.subtitle {
+  margin-block: 0.25rem 0.9rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--step-lede);
+  font-weight: 500;
+}
+
+.title + p {
+  margin-top: 0.75rem;
+}
+
+.beatTitle {
+  margin-bottom: 0.6rem;
+  font-family: var(--font-display);
+  font-size: var(--step-h3);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  font-size: var(--step-small);
+  font-weight: 500;
+}
+
+.small {
+  color: var(--text-muted);
+  font-size: var(--step-small);
+  line-height: 1.55;
+}
+
+.thesis {
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--bronze);
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+.code {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.layers {
+  display: grid;
+  gap: 0.35rem;
+  padding-left: 1.3rem;
+  font-size: var(--step-small);
+  line-height: 1.5;
+}
+
+.layers li::marker {
+  color: var(--bronze);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.layers strong {
+  font-weight: 600;
+}
+
+.layers strong::after {
+  content: ".";
+}
+
+.timeline {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+  font-size: var(--step-small);
+  line-height: 1.45;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.when {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.skills {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.skills dt {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.skills dd {
+  color: var(--text-muted);
+  font-size: var(--step-small);
+  line-height: 1.5;
+}
+
+.services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem 1.25rem;
+  margin-top: 0.9rem;
+  padding-left: 1.1rem;
+  font-weight: 500;
+}
+
+.services li::marker {
+  color: var(--bronze);
+}
+
+.cta {
+  margin-top: 1.25rem;
+  font-family: var(--font-display);
+  font-size: var(--step-h3);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ---- Links and buttons ---- */
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.links a,
+.jump a,
+.finaleActions a,
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--bronze);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.links a:hover,
+.jump a:hover,
+.finaleActions a:hover,
+.textButton:hover {
+  text-decoration-thickness: 2px;
+}
+
+.links .primaryLink {
+  color: var(--bronze);
+}
+
+.jump .primaryButton,
+.links .primaryButton,
+.finaleActions .primaryButton {
+  padding: 0 1.35rem;
+  border-radius: 2px;
+  background: var(--charcoal);
+  color: #f7f4ef;
+  text-decoration: none;
+  transition: background-color var(--ui-fast) var(--ease-ui);
+}
+
+.jump .primaryButton:hover,
+.links .primaryButton:hover {
+  background: var(--laterite);
+}
+
+.finaleActions .primaryButton {
+  background: var(--seam);
+  color: var(--charcoal);
+}
+
+.finaleActions .primaryButton:hover {
+  background: #fff1df;
+}
+
+/* ---- Opening ---- */
+
+.chapter[data-chapter="opening"] {
+  background: linear-gradient(90deg, rgb(238 233 225 / 0.92) 0, rgb(238 233 225 / 0.7) 30%, rgb(238 233 225 / 0) 58%);
+}
+
+.hero {
+  --text: var(--charcoal);
+  --text-muted: #4a443d;
+  --bronze: #7a5c30;
+  --seam: #b7864a;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.1rem;
+  max-width: 38rem;
+  min-height: calc(100svh - var(--topbar-height) - 20svh);
+  color: var(--text);
+}
+
+.beat:has(.hero) {
+  padding-block: 6svh;
+}
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--step-small);
+  font-weight: 500;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #2f6b3b;
+}
+
+.heroTitle {
+  font-weight: inherit;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: var(--step-h2);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.lede {
+  max-width: 36ch;
+  font-size: var(--step-lede);
+  line-height: 1.5;
+}
+
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.25rem;
+  margin-top: 0.4rem;
+}
+
+.cue {
+  margin-top: 1.5rem;
+  color: var(--text-muted);
+  font-size: var(--step-small);
+}
+
+/* ---- Finale ---- */
+
+.finale {
+  width: min(100%, 40rem);
+  padding: clamp(1.75rem, 4vw, 3rem);
+}
+
+.finaleTitle {
+  font-family: var(--font-display);
+  font-size: var(--step-h1);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.finale .lede {
+  margin-top: 1rem;
+}
+
+.finaleActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.4rem;
+  margin-top: 1.5rem;
+}
+
+/* ---- Labels pinned in the scenes ---- */
+
+.label {
+  display: block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  background: rgb(247 244 239 / 0.94);
+  color: var(--charcoal);
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px -10px rgb(20 19 18 / 0.6);
+}
+
+/* ---- Status line while the 3D loads, or after it falls back ---- */
+
+.status {
+  position: fixed;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  left: var(--gutter);
+  z-index: 12;
+  padding: 0.45rem 0.8rem;
+  border-radius: 2px;
+  background: rgb(30 28 26 / 0.88);
+  color: var(--on-basalt);
+  font-size: var(--step-caption);
+}
+
+/* ---- Chapter rail ---- */
+
+.rail {
+  position: fixed;
+  top: 50%;
+  right: max(0.6rem, env(safe-area-inset-right));
+  z-index: 12;
+  transform: translateY(-50%);
+}
+
+.rail ol {
+  display: grid;
+  list-style: none;
+}
+
+.rail a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  min-height: 34px;
+  padding-inline: 0.5rem;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+
+.railMark {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1.5px solid #f7f4ef;
+  border-radius: 50%;
+  background: rgb(30 28 26 / 0.55);
+  box-shadow: 0 0 0 1px rgb(30 28 26 / 0.25);
+  transition: transform var(--ui-fast) var(--ease-ui);
+}
+
+.railLabel {
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+  background: rgb(247 244 239 / 0.94);
+  font-size: var(--step-caption);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateX(0.25rem);
+  transition:
+    opacity var(--ui-fast) var(--ease-ui),
+    transform var(--ui-fast) var(--ease-ui);
+}
+
+.rail a[aria-current] .railMark {
+  background: var(--seam);
+  transform: scale(1.4);
+}
+
+.rail a:hover .railLabel,
+.rail a:focus-visible .railLabel,
+.rail a[aria-current] .railLabel {
+  opacity: 1;
+  transform: none;
+}
+
+.rail:hover a:not(:hover)[aria-current] .railLabel {
+  opacity: 0.45;
+}
+
+/* Only the flat layout and pictures standing in for scenes. */
+.flat {
+  display: none;
+}
+
+/* ---- Phones: panels sit low, the scene above them ---- */
+
+@media (max-width: 40rem) {
+  .journey {
+    --panel-width: 100%;
+    --gutter: 0.75rem;
+  }
+
+  .beat {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 30svh var(--gutter) 0.75rem;
+  }
+
+  .panel {
+    top: auto;
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    max-height: 60svh;
+    overflow-y: auto;
+    padding: 1.2rem 1.25rem 1.3rem;
+    font-size: 1rem;
+  }
+
+  .panel::before {
+    left: 1.25rem;
+  }
+
+  .layerPlain {
+    display: none;
+  }
+
+  .layers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .services {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .chapter[data-chapter="opening"] {
+    background: linear-gradient(180deg, rgb(238 233 225 / 0) 18%, rgb(238 233 225 / 0.82) 52%, rgb(238 233 225 / 0.94) 100%);
+  }
+
+  .hero {
+    justify-content: flex-end;
+    min-height: calc(100svh - var(--topbar-height) - 2rem);
+    gap: 0.85rem;
+  }
+
+  .beat:has(.hero) {
+    padding-block: 1rem;
+  }
+
+  .cue {
+    display: none;
+  }
+
+  .rail {
+    display: none;
+  }
+}
+
+/* ---- Flat layout: no WebGL, so chapters stack with their pictures ---- */
+
+.journey[data-mode="flat"] .stage {
+  display: none;
+}
+
+.journey[data-mode="flat"] .chapter {
+  min-height: 0;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  background: #eee9e1;
+}
+
+.journey[data-mode="flat"] .chapter[data-tone="basalt"] {
+  background: var(--basalt);
+}
+
+.journey[data-mode="flat"] .chapter[data-tone="laterite"] {
+  background: var(--laterite);
+}
+
+.journey[data-mode="flat"] .beat {
+  display: block;
+  padding: 0 var(--gutter);
+}
+
+.journey[data-mode="flat"] .beat + .beat {
+  margin-top: 1.25rem;
+}
+
+.journey[data-mode="flat"] .panel {
+  position: static;
+  width: min(100%, 46rem);
+  max-height: none;
+  margin-inline: auto;
+}
+
+.journey[data-mode="flat"] .bare {
+  width: min(100%, 46rem);
+  margin-inline: auto;
+}
+
+.journey[data-mode="flat"] .hero {
+  min-height: 0;
+}
+
+.journey[data-mode="flat"] .layerPlain {
+  display: inline;
+}
+
+.journey[data-mode="flat"] .flat {
+  display: block;
+  margin-top: 1.5rem;
+}
+
+.journey[data-mode="flat"] .flat img {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+}
+
+.journey[data-mode="flat"] .cue {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster,
+  .railLabel,
+  .railMark {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .panel,
+  .label,
+  .railLabel {
+    border: 1px solid CanvasText;
+  }
+}
