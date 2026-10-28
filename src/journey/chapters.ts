@@ -5,9 +5,10 @@ import type { Vec3 } from "@/museum/stops";
  * Camera keys are authored in Blender coordinates (metres, +Y north, Z up), like the tour stops,
  * and converted to three.js at runtime. Each key sits at a point (0–1) of its chapter's scroll.
  *
- * Worlds: the Court and FlowDesk are the Blender rooms (around the origin). The other projects,
- * About and Skills are lightweight scenes built in code, each placed far enough away that only
- * one world is ever on screen.
+ * Worlds: the Court and the project showroom are Blender buildings around the origin; the camera
+ * walks from one into the other and on through the showroom's four bays without a cut. About
+ * and Skills are lightweight scenes built in code, placed far enough away that only one world is
+ * ever on screen.
  */
 
 export type ChapterId =
@@ -22,7 +23,7 @@ export type ChapterId =
   | "services"
   | "contact";
 
-export type World = "court" | "flowdesk" | "ledgermind" | "accra" | "network" | "about" | "skills";
+export type World = "court" | "showroom" | "about" | "skills";
 
 export interface CameraKey {
   readonly at: number;
@@ -47,10 +48,7 @@ export interface Chapter {
 /** Blender-space origin of each world built in code. */
 export const WORLD_ORIGIN: Record<World, Vec3> = {
   court: [0, 0, 0],
-  flowdesk: [0, 0, 0],
-  ledgermind: [300, 0, 0],
-  accra: [600, 0, 0],
-  network: [900, 0, 0],
+  showroom: [0, 0, 0],
   about: [1200, 0, 0],
   skills: [1500, 0, 0],
 };
@@ -99,59 +97,73 @@ export const CHAPTERS: readonly Chapter[] = [
   {
     id: "flowdesk",
     nav: "FlowDesk",
-    world: "flowdesk",
+    world: "showroom",
     length: 2.4,
     sky: SKY,
     camera: [
-      key("flowdesk", 0, [0, 12, 3], [0, 28, 3.4], 55),
-      key("flowdesk", 0.2, [0.6, 27.5, 1.8], [0, 40, 2.4], 60),
+      key("showroom", 0, [0, 12, 3], [0, 28, 3.4], 55),
+      key("showroom", 0.2, [0.6, 27.5, 1.8], [0, 40, 2.4], 60),
       // The customer's phone wall, square-on.
-      key("flowdesk", 0.38, [-1.2, 33.4, 2.4], [-7.05, 33.95, 2.7], 46),
+      key("showroom", 0.38, [-1.2, 33.4, 2.4], [-7.05, 33.95, 2.7], 46),
       // Along the pipeline table, under the 3.6 m rail and clear of the table top.
-      key("flowdesk", 0.56, [2.6, 38.6, 3], [0, 43.5, 0.9], 50),
-      key("flowdesk", 0.7, [3.4, 44.5, 2.8], [0, 48.5, 0.9], 50),
+      key("showroom", 0.56, [2.6, 38.6, 3], [0, 43.5, 0.9], 50),
+      key("showroom", 0.7, [3.4, 44.5, 2.8], [0, 48.5, 0.9], 50),
       // The owner's board.
-      key("flowdesk", 0.88, [0, 52.5, 2.6], [6, 54.3, 1.9], 52),
-      key("flowdesk", 1, [0, 52.5, 2.6], [6, 54.3, 1.9], 52),
+      key("showroom", 0.88, [0, 52.5, 2.6], [6, 54.3, 1.9], 52),
+      key("showroom", 1, [0, 52.5, 2.6], [6, 54.3, 1.9], 52),
     ],
   },
   {
     id: "ledgermind",
     nav: "LedgerMind OS",
-    world: "ledgermind",
+    world: "showroom",
     length: 2,
-    sky: "#1d2623",
+    sky: SKY,
     camera: [
-      key("ledgermind", 0, [-10, -13, 6], [0, 0, 1.2], 40),
-      key("ledgermind", 0.45, [-5, -9, 3.6], [-3, 0, 1.2], 42),
-      key("ledgermind", 0.8, [4.5, -9, 3.8], [4, 0, 1.6], 42),
-      key("ledgermind", 1, [0, -15, 6.5], [0, 0, 1], 40),
+      key("showroom", 0, [0, 52.5, 2.6], [6, 54.3, 1.9], 52),
+      // Turn from the owner's board to the opening into the next bay (west of FlowDesk's shelves).
+      key("showroom", 0.12, [-2.2, 55.5, 2.6], [-3, 64, 2.2], 55),
+      // Through the opening, then round to the till, its queue tray and the connection leaving it.
+      key("showroom", 0.2, [-1.8, 60.5, 3.2], [-3.2, 63.8, 1.4], 54),
+      key("showroom", 0.3, [1.8, 60.6, 3.9], [-3.2, 63.8, 1.4], 52),
+      key("showroom", 0.48, [1.8, 60.6, 3.9], [-3.2, 63.8, 1.4], 52),
+      // Along the connection to the server as the queue syncs.
+      key("showroom", 0.62, [-3, 61.2, 5], [4, 67, 2], 52),
+      // Both stock figures: the counter's and the server's.
+      key("showroom", 0.85, [-3.6, 60.8, 3.6], [1.6, 65.5, 1.6], 56),
+      key("showroom", 1, [-3.6, 60.8, 3.6], [1.6, 65.5, 1.6], 56),
     ],
   },
   {
     id: "accra",
     nav: "Accra We Dey",
-    world: "accra",
+    world: "showroom",
     length: 1.6,
-    sky: "#e6cfae",
+    sky: SKY,
     camera: [
-      key("accra", 0, [-14, -32, 9], [0, -4, 0], 45),
-      key("accra", 0.5, [4, -8, 12], [0, 8, 0], 45),
-      key("accra", 0.82, [10, 7, 7], [0, 0, 3], 45),
-      key("accra", 1, [0, -26, 26], [0, 2, 0], 45),
+      key("showroom", 0, [-3.6, 60.8, 3.6], [1.6, 65.5, 1.6], 56),
+      // Past the server, through the opening, to the city model's shore.
+      key("showroom", 0.18, [0, 72.5, 3], [0, 82, 1.2], 55),
+      key("showroom", 0.36, [0, 78.6, 2.6], [0, 85.5, 0.95], 55),
+      // Over the city, then down beside the game server's tower.
+      key("showroom", 0.62, [4.2, 81, 4.2], [0.3, 86.5, 1], 52),
+      key("showroom", 0.86, [-3.2, 84, 2.8], [0.3, 87.2, 1.4], 50),
+      key("showroom", 1, [0, 89.5, 3.6], [0, 100, 1], 52),
     ],
   },
   {
     id: "joydatabundle",
     nav: "JoyDataBundle",
-    world: "network",
+    world: "showroom",
     length: 1.6,
-    sky: "#0f2a2f",
+    sky: SKY,
     camera: [
-      key("network", 0, [0, -28, 14], [0, 0, 2], 45),
-      key("network", 0.5, [-7, -13, 6.5], [-4, 0, 2.5], 45),
-      key("network", 0.8, [3, -7, 5], [0, 0, 3], 45),
-      key("network", 1, [0, -32, 22], [0, 0, 0], 45),
+      key("showroom", 0, [0, 89.5, 3.6], [0, 100, 1], 52),
+      key("showroom", 0.22, [0, 95.6, 3.2], [0, 103.2, 0.6], 55),
+      // Close to the resellers and the frontend ring, then the admin's payout review.
+      key("showroom", 0.5, [-4.2, 98.4, 2.2], [-1, 103.5, 0.6], 52),
+      key("showroom", 0.8, [2.6, 101, 2.4], [0, 105.6, 0.8], 50),
+      key("showroom", 1, [0, 97, 5.5], [0, 104, 0.5], 50),
     ],
   },
   {

@@ -10,10 +10,7 @@ import { CHAPTERS, chapterIndexOf, type World } from "@/journey/chapters";
 import { getScrollTarget, subscribeScrollTarget, view } from "@/journey/state";
 import { toThree } from "@/museum/stops";
 import { AboutScene } from "./scenes/AboutScene";
-import { AccraScene } from "./scenes/AccraScene";
-import { LedgerMindScene } from "./scenes/LedgerMindScene";
-import { NetworkScene } from "./scenes/NetworkScene";
-import { JourneyCourt, JourneyFlowDesk } from "./scenes/RoomScenes";
+import { JourneyCourt, JourneyShowroom } from "./scenes/RoomScenes";
 import { SkillsScene } from "./scenes/SkillsScene";
 
 /**
@@ -28,10 +25,10 @@ const FLASH_FADE = 1.8; // per second
 const MAX_DPR_TOUCH = 1.5;
 const MAX_DPR_DESKTOP = 2;
 const FAR = 220; // worlds sit 300 m apart, so only one is ever within reach
-const FLOWDESK_IDLE_MS = 6000;
+const SHOWROOM_IDLE_MS = 6000;
 const VIEW_SHIFT = 0.13; // of the screen: frames the subject beside the text panel, not under it
 
-const CODE_WORLDS = new Set<World>(["ledgermind", "accra", "network", "about", "skills"]);
+const CODE_WORLDS = new Set<World>(["about", "skills"]);
 const INDEX = {
   monument: chapterIndexOf("monument"),
   flowdesk: chapterIndexOf("flowdesk"),
@@ -42,6 +39,8 @@ const INDEX = {
   skills: chapterIndexOf("skills"),
   contact: chapterIndexOf("contact"),
 };
+
+const SHOWROOM_CHAPTERS = { ledgermind: INDEX.ledgermind, accra: INDEX.accra, joydatabundle: INDEX.joydatabundle };
 
 interface RigProps {
   readonly reducedMotion: boolean;
@@ -152,16 +151,16 @@ export default function JourneyCanvas({ reducedMotion, coarsePointer, onVeil, on
   const [dpr, setDpr] = useState(() => Math.min(maxDpr, window.devicePixelRatio));
   const active = useActiveChapter();
   const [courtReady, setCourtReady] = useState(false);
-  const [loadFlowDesk, setLoadFlowDesk] = useState(false);
+  const [loadShowroom, setLoadShowroom] = useState(false);
   const announceReady = useEffectEvent(onReady);
 
-  // FlowDesk streams in once the visitor heads down the page, or after the Court has been quiet on
-  // screen for a while: never in the same moments as the Court's own first frames.
-  if (!loadFlowDesk && courtReady && active >= INDEX.monument && active <= INDEX.ledgermind) setLoadFlowDesk(true);
+  // The showroom streams in once the visitor heads down the page, or after the Court has been quiet
+  // on screen for a while: never in the same moments as the Court's own first frames.
+  if (!loadShowroom && courtReady && active >= INDEX.monument && active <= INDEX.joydatabundle) setLoadShowroom(true);
   useEffect(() => {
     if (!courtReady) return;
     announceReady();
-    const timer = window.setTimeout(() => setLoadFlowDesk(true), FLOWDESK_IDLE_MS);
+    const timer = window.setTimeout(() => setLoadShowroom(true), SHOWROOM_IDLE_MS);
     return () => window.clearTimeout(timer);
   }, [courtReady]);
 
@@ -194,15 +193,12 @@ export default function JourneyCanvas({ reducedMotion, coarsePointer, onVeil, on
         <BronzeEnvironment />
         <JourneyCourt onReady={() => setCourtReady(true)} monumentIndex={INDEX.monument} contactIndex={INDEX.contact} />
       </Suspense>
-      {loadFlowDesk ? (
+      {loadShowroom ? (
         <Suspense fallback={null}>
-          <JourneyFlowDesk onReady={() => undefined} index={INDEX.flowdesk} />
+          <JourneyShowroom onReady={() => undefined} flowdeskIndex={INDEX.flowdesk} chapters={SHOWROOM_CHAPTERS} active={active} />
         </Suspense>
       ) : null}
 
-      {near(INDEX.ledgermind) ? <LedgerMindScene index={INDEX.ledgermind} labels={active === INDEX.ledgermind} /> : null}
-      {near(INDEX.accra) ? <AccraScene index={INDEX.accra} labels={active === INDEX.accra} dense={!coarsePointer} /> : null}
-      {near(INDEX.joydatabundle) ? <NetworkScene index={INDEX.joydatabundle} labels={active === INDEX.joydatabundle} /> : null}
       {near(INDEX.about) ? <AboutScene index={INDEX.about} /> : null}
       {near(INDEX.skills) ? <SkillsScene index={INDEX.skills} labels={active === INDEX.skills} /> : null}
 

@@ -43,7 +43,7 @@ describe("Home journey", () => {
       expect(screen.getByRole("link", { name: `Read the ${name} case study` })).toBeInTheDocument();
     }
     expect(screen.getByText(/not the game's own map or art/)).toBeInTheDocument();
-    expect(screen.getByText(/The backend was built by a teammate/)).toBeInTheDocument();
+    expect(screen.getAllByText(/a teammate built the backend/).length).toBeGreaterThan(0);
   });
 
   it("ends with a working contact finale in plain HTML", () => {

@@ -30,7 +30,8 @@ MODEL_DIR = os.path.join(REPO, "blender", "out", "raw")
 ROOMS = {
     # The Court floor gets its own atlas so shadows and paving joints stay sharp (Phase 2F).
     "court": {"collection": "EXPORT_court", "prefix": "CT", "exclude": ("CT_ground",), "exposure": 0.0, "split": ("CT_paving",)},
-    "flowdesk": {"collection": "EXPORT_flowdesk", "prefix": "FD", "exclude": (), "exposure": 0.3},
+    # The FlowDesk wing and the project showroom it opens into: one building, one GLB.
+    "showroom": {"collection": "EXPORT_flowdesk", "prefix": "SR", "exclude": (), "exposure": 0.3, "size": 2048},
 }
 
 # Parts the browser moves or replaces at runtime; everything else is merged.
@@ -41,9 +42,10 @@ RUNTIME_PREFIXES = (
     "FD_floor_gate",
     "FD_order_slip",
     "FD_order_slab",
+    "SR_lm_",
 )
 # Reflective bronze and the interface displays keep their own materials instead of the baked atlas.
-UNBAKED_PREFIXES = ("CT_monument_", "FD_screen_")
+UNBAKED_PREFIXES = ("CT_monument_", "FD_screen_", "SR_lm_screen", "SR_lm_link")
 
 
 def _args():
@@ -229,7 +231,8 @@ def bake_room(room, size, samples):
             continue
         group_started = time.perf_counter()
         _pack_uvs(group)
-        image = bpy.data.images.new(f"LM_{room}_{suffix}", size, size, float_buffer=True, alpha=False)
+        room_size = spec.get("size", size)
+        image = bpy.data.images.new(f"LM_{room}_{suffix}", room_size, room_size, float_buffer=True, alpha=False)
         _bake(group, image, samples)
         path = os.path.join(BAKE_DIR, f"{room}_{suffix}.png")
         _denoise_and_save(image, path, spec["exposure"])

@@ -80,13 +80,41 @@ describe("authored chapters", () => {
   });
 });
 
+describe("the showroom walk", () => {
+  // Inner faces from blender/scripts/rooms/flowdesk.py and showroom.py.
+  const HALF_WIDTH = 7.2;
+  const CEILING = 10.8;
+  const PARTITIONS = [
+    { y0: 59.4, y1: 60, open0: -6, open1: 0 },
+    { y0: 76.8, y1: 77.4, open0: -3.6, open1: 3.6 },
+    { y0: 94.2, y1: 94.8, open0: -3.6, open1: 3.6 },
+  ];
+
+  it("stays inside the building and passes each partition through its opening", () => {
+    for (const id of ["ledgermind", "accra", "joydatabundle"]) {
+      const index = chapterIndexOf(id);
+      for (let t = 0; t <= 1; t += 0.005) {
+        const [x, y, z] = poseAt(index + t).position;
+        expect(Math.abs(x)).toBeLessThan(HALF_WIDTH - 0.3);
+        expect(z).toBeLessThan(CEILING - 0.5);
+        for (const wall of PARTITIONS) {
+          if (y > wall.y0 - 0.15 && y < wall.y1 + 0.15) {
+            expect(x).toBeGreaterThan(wall.open0 + 0.3);
+            expect(x).toBeLessThan(wall.open1 - 0.3);
+            expect(z).toBeLessThan(6 - 0.3);
+          }
+        }
+      }
+    }
+  });
+});
+
 describe("worldCuts and veilAt", () => {
-  it("cuts between worlds but walks from the Court into FlowDesk", () => {
+  it("cuts between worlds but walks from the Court through the whole showroom", () => {
     const cuts = worldCuts();
-    expect(cuts).not.toContain(chapterIndexOf("flowdesk"));
-    expect(cuts).toContain(chapterIndexOf("ledgermind"));
+    for (const id of ["flowdesk", "ledgermind", "accra", "joydatabundle", "contact"]) expect(cuts).not.toContain(chapterIndexOf(id));
+    expect(cuts).toContain(chapterIndexOf("about"));
     expect(cuts).toContain(chapterIndexOf("services"));
-    expect(cuts).not.toContain(chapterIndexOf("contact"));
   });
 
   it("is opaque at a cut and clear away from it", () => {

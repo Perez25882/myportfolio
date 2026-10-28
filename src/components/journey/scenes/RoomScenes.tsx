@@ -3,13 +3,14 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useEffectEvent, useMemo, useRef } from "react";
 import { Color, MeshBasicMaterial, type Object3D } from "three";
-import { COURT_URL, FLOWDESK_URL, restPosition, useBakedScene, useCompiledScene } from "@/components/three/baked";
+import { COURT_URL, SHOWROOM_URL, restPosition, useBakedScene, useCompiledScene } from "@/components/three/baked";
+import { ShowroomExhibits, type ShowroomChapters } from "./ShowroomExhibits";
 import { smoothstep } from "@/journey/camera";
 import { progressIn, span, view } from "@/journey/state";
 
 /**
- * The two Blender rooms on the journey: the Court (with the Code Monument) and FlowDesk. Their
- * moving parts follow scroll instead of tour stops.
+ * The two Blender buildings on the journey: the Court (with the Code Monument) and the project
+ * showroom, whose first bay is FlowDesk. Their moving parts follow scroll instead of tour stops.
  */
 
 const SEAM_OPENING = 0.35; // metres each cast half moves along the seam, as in the tour
@@ -64,8 +65,14 @@ const STATION_PITCH = 1.3; // metres between pipeline stations, as in the tour
 const GATE_DROP = -0.78;
 const LID_LIFT = 1.1;
 
-export function JourneyFlowDesk({ onReady, index }: RoomProps & { readonly index: number }) {
-  const scene = useBakedScene(FLOWDESK_URL);
+interface ShowroomProps extends RoomProps {
+  readonly flowdeskIndex: number;
+  readonly chapters: ShowroomChapters;
+  readonly active: number;
+}
+
+export function JourneyShowroom({ onReady, flowdeskIndex, chapters, active }: ShowroomProps) {
+  const scene = useBakedScene(SHOWROOM_URL);
   const compiled = useCompiledScene(scene);
   const announceReady = useEffectEvent(onReady);
   useEffect(() => {
@@ -84,7 +91,7 @@ export function JourneyFlowDesk({ onReady, index }: RoomProps & { readonly index
   }, [scene]);
 
   useFrame(() => {
-    const p = progressIn(view.s, index);
+    const p = progressIn(view.s, flowdeskIndex);
     const { lid, gate, slip, slab } = parts;
     // The order's journey down the table: understood (station 3), stopped at the price floor
     // while the gate rises (4), then recorded (6) and placed on the owner's counter.
@@ -106,5 +113,10 @@ export function JourneyFlowDesk({ onReady, index }: RoomProps & { readonly index
     slab?.scale.setScalar(p >= 0.84 ? 1 : 0.0001);
   });
 
-  return <primitive object={scene} visible={compiled} />;
+  return (
+    <>
+      <primitive object={scene} visible={compiled} />
+      {compiled ? <ShowroomExhibits scene={scene} chapters={chapters} active={active} /> : null}
+    </>
+  );
 }

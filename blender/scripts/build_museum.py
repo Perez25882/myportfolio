@@ -18,7 +18,7 @@ import bpy
 
 import review
 from lib import geometry, guard, materials, planting
-from rooms import court, flowdesk, monument
+from rooms import court, flowdesk, monument, showroom
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 BLEND_PATH = os.path.join(REPO, "blender", "src", "museum.blend")
@@ -30,7 +30,7 @@ EXPORTED = ("EXPORT_court", "EXPORT_flowdesk")
 
 def _reload():
     """Pick up script edits without restarting Blender (helpers first, then their users)."""
-    for module in (geometry, materials, guard, planting, monument, court, flowdesk, review):
+    for module in (geometry, materials, guard, planting, monument, court, flowdesk, showroom, review):
         importlib.reload(module)
 
 
@@ -52,6 +52,8 @@ def build(scene):
     mats = materials.library()
     court.build(collections["EXPORT_court"], collections["REF_scale"], mats, collections["BAKE_LIGHTS_court"])
     flowdesk.build(collections["EXPORT_flowdesk"], collections["REF_scale"], mats, collections["BAKE_LIGHTS_flowdesk"])
+    # The FlowDesk wing continues as the project showroom: same collection, one building.
+    showroom.build(collections["EXPORT_flowdesk"], mats, collections["BAKE_LIGHTS_flowdesk"])
     review.setup(scene, collections["REVIEW"])
     review.configure_cycles(scene)
     return {name: _stats(collections[name]) for name in EXPORTED}

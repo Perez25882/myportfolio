@@ -1,5 +1,8 @@
 """FlowDesk wing: a daylit gallery around a real small-shop setting (approved at Checkpoint B).
 
+Since 2026-10-28 the wing is the first bay of the project showroom: its shell runs on north
+to SHOWROOM_END, and rooms/showroom.py adds the partitions and the other projects' bays.
+
 Reached through the Court's north threshold, then a low vestibule (4.8 high)
 that releases into the hall: compression before expansion.
 
@@ -24,7 +27,8 @@ from lib.geometry import Batch, box
 WALL = 0.6
 HALF_WIDTH = 7.2
 HALL_START = 30.6  # inner face of the south wall
-HALL_END = 59.4  # inner face of the north wall
+HALL_END = 59.4  # end of the FlowDesk bay: a partition into the showroom's next bay (rooms/showroom.py)
+SHOWROOM_END = 111.6  # inner face of the building's north wall, after the showroom's three further bays
 HEIGHT = 10.8
 CLERESTORY = (8.4, 10.2)
 SLAT_PITCH = 0.4
@@ -41,7 +45,7 @@ def _shell(batch, roof, mats):
     concrete, timber, terrazzo = mats["M_concrete_laterite"], mats["M_timber_screen"], mats["M_floor_terrazzo"]
     outer = HALF_WIDTH + WALL
     south0 = HALL_START - WALL
-    north1 = HALL_END + WALL
+    north1 = SHOWROOM_END + WALL
 
     batch.box(terrazzo, -outer, outer, VESTIBULE_START, north1, -0.3, 0)
     batch.box(mats["M_bronze"], -0.04, 0.04, VESTIBULE_START, 34.8, 0, 0.004)  # seam inlay continues from the Court
@@ -67,7 +71,7 @@ def _shell(batch, roof, mats):
             y = min(south0 + i * SLAT_PITCH, north1 - SLAT)
             batch.box(timber, x0, x1, y, y + SLAT, low, high)
 
-    batch.box(concrete, -outer, outer, HALL_END, north1, 0, HEIGHT)
+    batch.box(concrete, -outer, outer, SHOWROOM_END, north1, 0, HEIGHT)
 
     # Roof in two halves with a louvred skylight slot along the axis.
     roof.box(concrete, -outer, -SKYLIGHT_HALF, south0, north1, HEIGHT, HEIGHT + WALL)

@@ -24,7 +24,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const RAW_DIR = path.join(ROOT, "blender", "out", "raw");
 // MODELS_OUT_DIR lets a candidate set be built beside the served one (e.g. public/models/f2).
 const OUT_DIR = path.resolve(ROOT, process.env.MODELS_OUT_DIR ?? path.join("public", "models"));
-const ROOMS = ["court", "flowdesk"];
+const ROOMS = ["court", "showroom"];
 
 // KTX-Software (Khronos) installs here on Windows; make its `ktx` tool findable.
 const KTX_BIN = "C:\\Program Files\\KTX-Software\\bin";

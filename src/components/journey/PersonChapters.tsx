@@ -37,7 +37,8 @@ export function OpeningChapter() {
         </h1>
         <p className={styles.headline}>{profile.headline}</p>
         <p className={styles.lede}>
-          {profile.role} in {profile.location}. Scroll to walk through four projects, or go straight to what you need.
+          I&apos;m {profile.name}, a {profile.role.toLowerCase()} in {profile.location}. Scroll to walk through what I&apos;ve
+          built, or go straight to what you need.
         </p>
         <nav aria-label="Jump to" className={styles.jump}>
           <a href="#flowdesk" className={styles.primaryButton}>
@@ -66,7 +67,7 @@ export function MonumentChapter() {
         </h2>
         <p>
           Three cast-bronze characters, <span className={styles.code}>&lt; / &gt;</span>: the symbols that wrap every piece
-          of code. They stand at the centre of the court, and every project here is reached from it.
+          of code. Everything I build starts there, so this is where my story starts too.
         </p>
         <FlatVisual>
           <Image
@@ -79,10 +80,10 @@ export function MonumentChapter() {
         </FlatVisual>
       </Beat>
       <Beat>
-        <h3 className={styles.beatTitle}>Look beneath the surface</h3>
+        <h3 className={styles.beatTitle}>Beyond it, the showroom</h3>
         <p>
-          Up close, the casts part along their seams to show the steel inside. Each project ahead works the same way: first
-          what it does, then how it&apos;s built.
+          The building across the court is my project showroom: four bays, one for each project I&apos;ve built. In each,
+          you&apos;ll see what it does first, then how it works underneath.
         </p>
       </Beat>
     </Chapter>

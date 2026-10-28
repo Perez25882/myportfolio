@@ -31,7 +31,8 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
  */
 
 export const COURT_URL = "/models/court.glb";
-export const FLOWDESK_URL = "/models/flowdesk.glb";
+/** The FlowDesk wing and the project showroom it opens into: one building, one file. */
+export const SHOWROOM_URL = "/models/showroom.glb";
 export const SKY = "#a9c1d8";
 export const GROUND = "#8c7b66";
 
@@ -71,7 +72,8 @@ export function useBakedScene(url: string): Object3D {
       mesh.material =
         source.metalness > 0.5 && !source.map
           ? new MeshStandardMaterial({ color: source.color, metalness: 1, roughness: BRONZE_ROUGHNESS })
-          : new MeshBasicMaterial({ map: source.map ?? null });
+          : // Untextured parts (the showroom's live screen and connection) keep their base colour.
+            new MeshBasicMaterial({ map: source.map ?? null, color: source.map ? 0xffffff : source.color });
       mesh.matrixAutoUpdate = false;
       mesh.updateMatrix();
     });

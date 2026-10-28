@@ -5,14 +5,17 @@ import { ProjectVisual } from "@/components/work/ProjectVisual";
 import { getCaseStudy } from "@/content/caseStudies";
 import { flowdeskCaseStudy } from "@/content/flowdesk";
 import { getProject } from "@/content/projects";
+import { bayStory } from "@/content/showroom";
 import type { Project } from "@/content/types";
+import { formatMonth } from "@/lib/format";
 import { Beat, Chapter, FlatVisual } from "./Chapter";
 import styles from "./journey.module.css";
 
 /**
- * The four flagship projects, each told across a few beats while its scene plays behind. Every
- * sentence comes from the verified content modules (projects.ts, flowdesk.ts, caseStudies.ts);
- * the full case study is one link away from each chapter.
+ * The four flagship projects, one bay of the showroom each, told in Perez's own voice across a
+ * few beats while the camera walks the bay. Every sentence comes from the verified content
+ * modules (showroom.ts, projects.ts, flowdesk.ts, caseStudies.ts); the full case study is one
+ * link away from each chapter.
  */
 
 function required<T>(value: T | undefined, name: string): T {
@@ -31,11 +34,14 @@ const joydataStudy = required(getCaseStudy("joydatabundle"), "joydatabundle case
 const note = (notes: readonly { title: string; body: string }[], title: string) =>
   required(notes.find((entry) => entry.title === title), title).body;
 
+/** A bay's opening: where it stands in the showroom, when its code first went public, and Perez's own introduction. */
 function ProjectHead({ project, number, id }: { readonly project: Project; readonly number: number; readonly id: string }) {
+  const story = required(bayStory(project.slug), `${project.slug} bay story`);
   return (
     <>
       <p className={styles.kicker}>
-        <span>Project {number} of 4</span>
+        <span>Bay {number} of 4</span>
+        <span>{formatMonth(story.since)}</span>
         <StatusChip kind={project.status} />
         {project.isTeamProject ? <StatusChip kind="team" /> : null}
       </p>
@@ -43,6 +49,7 @@ function ProjectHead({ project, number, id }: { readonly project: Project; reado
         {project.name}
       </h2>
       <p className={styles.subtitle}>{project.exhibitTitle}</p>
+      <p>{story.intro}</p>
     </>
   );
 }
@@ -73,7 +80,6 @@ export function FlowDeskChapter() {
     <Chapter id="flowdesk">
       <Beat>
         <ProjectHead project={flowdesk} number={1} id="flowdesk-title" />
-        <p>{flowdesk.purpose}</p>
         <FlatVisual>
           <ProjectVisual slug="flowdesk" />
         </FlatVisual>
@@ -113,7 +119,6 @@ export function LedgerMindChapter() {
     <Chapter id="ledgermind">
       <Beat>
         <ProjectHead project={ledgermind} number={2} id="ledgermind-title" />
-        <p>{ledgermindStudy.opening.body}</p>
         <FlatVisual>
           <ProjectVisual slug="ledgermind" />
         </FlatVisual>
@@ -145,8 +150,7 @@ export function AccraChapter() {
     <Chapter id="accra">
       <Beat>
         <ProjectHead project={accra} number={3} id="accra-title" />
-        <p>{accraStudy.opening.body}</p>
-        <p className={styles.small}>This city is an Accra-inspired illustration, not the game&apos;s own map or art.</p>
+        <p className={styles.small}>The city model in the showroom is an Accra-inspired illustration, not the game&apos;s own map or art.</p>
         <FlatVisual>
           <ProjectVisual slug="accra-we-dey" />
         </FlatVisual>
@@ -174,19 +178,18 @@ export function JoyDataBundleChapter() {
     <Chapter id="joydatabundle">
       <Beat>
         <ProjectHead project={joydata} number={4} id="joydatabundle-title" />
-        <p>{joydataStudy.opening.body}</p>
         <FlatVisual>
           <ProjectVisual slug="joydatabundle" />
         </FlatVisual>
       </Beat>
       <Beat>
-        <h3 className={styles.beatTitle}>Perez&apos;s part: the frontend</h3>
-        <p>{note(notes, "A team of three")}</p>
-        <p className={styles.small}>In the scene, the backend is drawn in grey: it is a teammate&apos;s work.</p>
+        <h3 className={styles.beatTitle}>My part: the frontend</h3>
+        <p>I worked on the frontend that customers and resellers use; a teammate built the backend.</p>
+        <p className={styles.small}>In the showroom, the backend is drawn in grey: it&apos;s their work.</p>
       </Beat>
       <Beat>
         <h3 className={styles.beatTitle}>Payouts checked before they&apos;re paid</h3>
-        <p>{note(notes, "Payouts that are checked before they're paid")}</p>
+        <p>I built the admin payout flow, where an admin reviews each reseller payout and confirms it.</p>
         <p className={styles.small}>{note(notes, "Live")}</p>
         <CaseLinks project={joydata} />
       </Beat>

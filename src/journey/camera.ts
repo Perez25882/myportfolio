@@ -61,7 +61,7 @@ export function poseAt(s: number, chapters: readonly Chapter[] = CHAPTERS): Came
 
 /**
  * Portrait screens see less width, so the camera widens its lens and, in the open worlds built
- * in code, steps back. In the walled Blender rooms (the Court and FlowDesk) it only widens:
+ * in code, steps back. In the walled Blender buildings (the Court and the showroom) it only widens:
  * stepping back would put it through a wall.
  */
 export function fitToAspect(pose: CameraPose, aspect: number, enclosed: boolean): CameraPose {
@@ -87,10 +87,10 @@ export function quantize(s: number, chapters: readonly Chapter[] = CHAPTERS): nu
   return index + at;
 }
 
-/** Points where the scene changes world (not the Court to FlowDesk walk): covered by a veil. */
+/** Points where the scene changes world (not the walk from the Court into the showroom): covered by a veil. */
 export function worldCuts(chapters: readonly Chapter[] = CHAPTERS): readonly number[] {
-  // The Court and FlowDesk share one Blender space: the camera walks from one into the other.
-  const rooms = new Set(["court", "flowdesk"]);
+  // The Court and the showroom share one Blender space: the camera walks from one into the other.
+  const rooms = new Set(["court", "showroom"]);
   const continuous = (a: string, b: string) => a === b || (rooms.has(a) && rooms.has(b));
   const cuts: number[] = [];
   for (let i = 1; i < chapters.length; i += 1) {

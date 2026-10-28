@@ -22,14 +22,16 @@ The home page is one continuous scroll through ten chapters, with a single persi
 |---|---|---|
 | 1 | Opening: **PEREZ** / "I build ideas into things that work." | The Dawn Courtyard (Blender), Code Monument in view |
 | 2 | The Code Monument | Camera approaches the monument. The casts part along their seams to show the steel. The camera rises over the monument, already looking ahead to FlowDesk. |
-| 3 | FlowDesk | Camera walks from the court into the FlowDesk hall: the customer's phone wall, then the seven-layer pipeline (the order slip moves down the table, the price-floor gate rises, the lid lifts), then the owner's board. |
-| 4 | LedgerMind OS | Code-built shop counter and server. A sale goes through. The connection drops (the room cools), and sales queue on the device. The connection returns and the queue syncs: a resent sale is recognised and not counted twice. The counter then takes the server's stock. |
-| 5 | Accra We Dey | Code-built miniature city: players on the streets, venues in the squares, the game server's ticks rippling out. **Labelled as an illustration, not the game's map or art.** |
-| 6 | JoyDataBundle | Distribution network: customers, then resellers, then the backend (drawn grey and labelled as a teammate's work). Payouts pass through the admin review (Perez's flow). The frontend ring is labelled as Perez's part. |
+| 3 | FlowDesk (showroom bay 1) | Camera walks from the court into the showroom's first bay: the customer's phone wall, then the seven-layer pipeline (the order slip moves down the table, the price-floor gate rises, the lid lifts), then the owner's board. |
+| 4 | LedgerMind OS (bay 2) | A branch counter, its till and queue tray, and the server, joined by an overhead connection. A sale goes through; the connection goes dark and sales queue on the till; it returns and the queue syncs (a resent sale is recognised, not counted twice); the counter then takes the server's stock. |
+| 5 | Accra We Dey (bay 3) | An architectural model of an Accra-inspired city on a plinth, the sea along its south edge: players walk the streets, venues stand in the squares, the game server's ticks ripple out. **Labelled as an illustration, not the game's map or art.** |
+| 6 | JoyDataBundle (bay 4) | A round dais: customers, resellers, the backend hub (grey, labelled as a teammate's work), the frontend ring (Perez's part) and the admin payout desk (Perez's flow). Orders flow in; payouts wait for review, then go out. |
 | 7 | About | "Curiosity made me explore." Scattered pieces settle into a lattice tower: "Ambition made me build." The Experience timeline follows. |
 | 8 | Skills | One system rather than a logo grid: web and mobile interfaces, backend, databases, architecture posts, a security ring, and AI-assisted engineering beside the stack. Readable labels throughout. |
 | 9 | Work with me | Six services, then "Have a project in mind? Let's build it." and Contact. |
 | 10 | Contact finale | The court turns to dusk. "Let's build something together." Contact, GitHub, Work with me and the 2D portfolio are all real HTML. |
+
+**The project showroom (2026-10-28).** The FlowDesk building now continues north as one showroom with a bay per project, built in Blender (`blender/scripts/rooms/showroom.py`) and baked like the rest of the museum. The camera walks from the court through all four bays without a cut. Each bay opens in Perez's own voice, using only verified facts (`src/content/showroom.ts`): what the project solves, what he built, and when its code first went public.
 
 All text is server-rendered HTML in the page, not drawn in WebGL. Every project chapter links to its full case study. Contact is reachable at all times from the top bar, and from the opening links ("See the projects", Services, About, Contact, 2D portfolio). A chapter rail on the right links every chapter directly.
 
@@ -39,7 +41,7 @@ The guided tour (`/museum`), the 2D portfolio (`/quick`), the case studies and W
 
 - **One number drives everything.** A single GSAP ScrollTrigger turns the scroll position into `s` = chapter index + progress through that chapter. `s` is stored outside React (`src/journey/state.ts`), so scrolling never re-renders a component.
 - **One camera rig.** It eases `s`, samples the authored camera keys (`src/journey/chapters.ts`, in Blender coordinates) and sets the sky, the lights and the veil. Every scene reads the same eased value in the same frame, so there are no competing loops. The canvas renders on demand and draws nothing while the page is still.
-- **Worlds are streamed, not resident.** The Court loads first. FlowDesk streams in when the visitor heads down the page, or after six quiet seconds. Each code-built world is built only around its own chapter, compiled off the main thread before it is shown, and released afterwards. Changes of world happen behind a short veil.
+- **Worlds are streamed, not resident.** The Court loads first. The showroom streams in when the visitor heads down the page, or after six quiet seconds. About and Skills, the two scenes built in code, exist only around their own chapters, compiled off the main thread before they are shown and released afterwards. Changes of world happen behind a short veil.
 - **Mobile.** Pixel ratio is capped at 1.5 on touch devices and adapts to frame rate. Phones get a smaller city, wider lenses, and text panels anchored low with the scene framed above them. Materials are baked and unlit, plus one sun for the code-built worlds. All repeated objects are instanced.
 - **Reduced motion.** The camera holds each authored composition and cuts between them, never flying. Scenes still show the state the text describes. The veil and the text entrances are off.
 - **No WebGL, or a failure.** The page switches to a flat layout: chapters stack with their pictures, and everything stays readable and linked. A lost graphics context switches to the same layout, with a notice.
@@ -96,17 +98,11 @@ The cause was the bronze's reflections: three.js was prefiltering them in the br
 - **Only Chrome on Windows was tested.** Safari (iOS and macOS) and Firefox are untested.
 - **Panels move with the page.** Text panels pin only briefly before scrolling on; they never freeze the page. On phones a long panel, such as the experience timeline, scrolls inside itself.
 
-## Waiting on you
+## Resolved on 2026-10-28
 
-These items keep their "to confirm" markers. `SHOW_REVIEW_MARKERS` must be set to `false` before launch.
-
-- **Contact: email, LinkedIn and CV (Q10, Q11).** None have been supplied. The finale and opening already render them as real links the moment `profile.contact` has them; until then the finale shows GitHub only.
-- **AI-assisted engineering (D2).** It is listed in Skills from your directive; its disclosure wording is still open.
-- **Services wording (S1).** The services wording and process copy, as on Work with me.
-- **Role and availability wording (D6).** The opening uses "Software developer and product builder" from the directive, and the availability line "Open to work" is still unconfirmed.
-- **Also still open: D1, D3, D5, D8.** D3 and D5 keep the FlowDesk and Accra We Dey repositories withheld.
-- **The narrative line (P1-6)** is now treated as confirmed by the directive.
-- **Accra We Dey's city** is an illustration. If you'd rather show the game's real map or art, it needs your go-ahead (and D5).
+- **Contact:** both email addresses (perez25882@gmail.com and pereztegbey66@gmail.com, each with a copy button), WhatsApp and a call link for +233 55 842 5882, and LinkedIn appear in the finale, the contact panel, the 2D portfolio and Work with me.
+- **Review markers:** every open decision was resolved by the founder; the "to confirm" markers and their code are gone. FlowDesk's and Accra We Dey's repositories stay private.
+- **Still to come:** a CV. It appears everywhere automatically once `profile.contact.cvHref` is set.
 
 ## Reviewing it
 

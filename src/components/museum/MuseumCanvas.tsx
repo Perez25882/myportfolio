@@ -7,8 +7,8 @@ import { type Object3D, type PerspectiveCamera, Vector3 } from "three";
 import {
   BronzeEnvironment,
   COURT_URL,
-  FLOWDESK_URL,
   Ground,
+  SHOWROOM_URL,
   SKY,
   restPosition,
   useBakedScene,
@@ -78,7 +78,7 @@ function partOffset(part: RuntimePart, stopId: string, progress: number): [numbe
 }
 
 function FlowDesk({ onReady, reducedMotion }: { readonly onReady: () => void; readonly reducedMotion: boolean }) {
-  const scene = useBakedScene(FLOWDESK_URL);
+  const scene = useBakedScene(SHOWROOM_URL);
   const stopId = useMuseumStore((state) => STOPS[state.stopIndex].id);
   const recorded = useMuseumStore((state) => orderRecorded(state.demoProgress));
   const invalidate = useThree((state) => state.invalidate);

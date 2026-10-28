@@ -11,7 +11,8 @@ scripts/
   lib/materials.py    material library: procedural, world-space, one source of truth
   lib/guard.py        idempotency: wipe and rebuild named collections
   rooms/court.py      the Court
-  rooms/flowdesk.py   the FlowDesk wing
+  rooms/flowdesk.py   the FlowDesk wing: the showroom's first bay
+  rooms/showroom.py   the project showroom: LedgerMind OS, Accra We Dey and JoyDataBundle bays
 src/
   museum.blend            current scene (Checkpoint C onward)
   museum_blockout.blend   Checkpoint B blockout, kept for reference
@@ -52,5 +53,6 @@ Add `--shots arrival_landscape flowdesk_entry_landscape` to render a subset.
 
 - Units: metres, +Y north, origin at the centre of the Court floor. Everything sits on the 1.2 m module (3.6 m bays, 0.4 m screen blocks).
 - Static geometry is merged per material per room (`CT_<material>`, `FD_<material>`, `FD_roof_<material>`). Parts that change at runtime stay separate: `CT_stratum_01…12`, `CT_stratum_spine`, `FD_chat_screen`, `FD_kiosk_screen`, `FD_architecture_layer_1…7`, `FD_order_slab`.
-- Prefixes: `CT_` Court, `FD_` FlowDesk, `REF_` reference only, `CAM_` cameras, `LGT_` lights.
+- Prefixes: `CT_` Court, `FD_` FlowDesk, `SR_` the rest of the project showroom (`SR_lm_*` are LedgerMind's moving parts), `REF_` reference only, `CAM_` cameras, `LGT_` lights.
+- The FlowDesk wing and the showroom bake and export together as one building: `showroom.glb` (`bake_export.py --rooms showroom`, 2048 atlas). The journey's moving pieces in the Accra and JoyDataBundle bays are drawn in code at coordinates mirrored in `src/components/journey/scenes/showroomLayout.ts`.
 - Materials come only from `lib/materials.py` (`M_*`). They are procedural, so they must be baked to textures before GLB export.

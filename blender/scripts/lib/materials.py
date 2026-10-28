@@ -38,6 +38,19 @@ SPECS = {
     "M_warm_line": ("#FFD9AE", 0.5, 0.0, "warm_light"),
     "M_screen_customer": ("#0F1716", 0.25, 0.0, "screen_customer"),
     "M_screen_owner": ("#0F1716", 0.25, 0.0, "screen_owner"),
+    # The project showroom (2026-10-28): each project's own tone, and the plaster of the 2D portfolio.
+    "M_plaster": ("#E9E1D4", 0.8, 0.0, "flat"),
+    "M_sand": ("#D8C3A2", 0.9, 0.0, "flat"),
+    "M_laterite_clay": ("#A0583A", 0.85, 0.0, "flat"),
+    "M_ochre": ("#C08A4A", 0.8, 0.0, "flat"),
+    "M_sea": ("#5F7F7A", 0.2, 0.0, "flat"),
+    "M_ledgermind": ("#3F5A52", 0.7, 0.0, "flat"),
+    "M_teal": ("#69B9C4", 0.6, 0.0, "flat"),
+    "M_teal_deep": ("#0F7C8F", 0.5, 0.0, "flat"),
+    "M_backend_grey": ("#7A8486", 0.7, 0.0, "flat"),
+    # Runtime-coloured parts, left unbaked: the browser recolours them (online, offline).
+    "M_live_screen": ("#7FC4A4", 0.4, 0.0, "flat"),
+    "M_live_link": ("#B48A4E", 0.5, 0.0, "flat"),
 }
 
 # Interface reconstructions shown on the FlowDesk displays (rendered from blender/refs/ui/*.html).
