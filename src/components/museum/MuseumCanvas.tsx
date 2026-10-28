@@ -265,6 +265,9 @@ export default function MuseumCanvas(props: MuseumCanvasProps) {
       camera={{ near: 0.1, far: 400, fov: 50 }}
       gl={{ antialias: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {
+        // Checking each shader for errors asks the driver for its link status, which blocks the
+        // main thread until compilation ends. Development builds keep the check.
+        gl.debug.checkShaderErrors = process.env.NODE_ENV !== "production";
         gl.domElement.addEventListener("webglcontextlost", (event) => {
           event.preventDefault();
           onContextLost();
@@ -278,8 +281,8 @@ export default function MuseumCanvas(props: MuseumCanvasProps) {
         onIncline={() => setDpr((value) => Math.min(maxDpr, value + 0.25))}
       />
       <Ground />
-      <BronzeEnvironment />
       <Suspense fallback={null}>
+        <BronzeEnvironment />
         <Court onReady={handleCourtReady} reducedMotion={reducedMotion} />
       </Suspense>
       {loadFlowDesk ? (

@@ -2,8 +2,23 @@
 
 import { useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useState } from "react";
-import { MeshBasicMaterial, MeshStandardMaterial, PMREMGenerator, type Mesh, type Object3D, type Vector3, type WebGLRenderer } from "three";
+import { use, useEffect, useMemo, useState } from "react";
+import {
+  CubeUVReflectionMapping,
+  DataTexture,
+  DataUtils,
+  HalfFloatType,
+  LinearFilter,
+  LinearSRGBColorSpace,
+  MeshBasicMaterial,
+  MeshStandardMaterial,
+  PMREMGenerator,
+  RGBAFormat,
+  type Mesh,
+  type Object3D,
+  type Vector3,
+  type WebGLRenderer,
+} from "three";
 import type { KTX2Loader as StdlibKTX2Loader } from "three-stdlib";
 // three's own loader: it matches the r186 Basis transcoder served from /basis/. three-stdlib's
 // older loader speaks a different worker protocol and hangs silently with this transcoder.
@@ -114,10 +129,70 @@ export function Ground({ color = GROUND }: { readonly color?: string }) {
   );
 }
 
-/** Reflections for the bronze: a small procedural room environment, prefiltered once. */
+/**
+ * The bronze's reflections: three's RoomEnvironment, prefiltered (PMREM) ahead of time by
+ * tools/env-bake into three's CubeUV layout, so the browser skips half a second or more of blocked
+ * main thread. Stored as an ordinary opaque PNG, twice as tall as the texture: RGB mantissas on
+ * top, each texel's shared exponent below (RGBE without an alpha channel, so nothing is
+ * premultiplied when the browser decodes it).
+ */
+const BRONZE_ENVIRONMENT_URL = "/env/bronze-room-128.png";
+const ENVIRONMENT_WIDTH = 384;
+const ENVIRONMENT_HEIGHT = 512;
+
+async function loadBakedEnvironment(): Promise<DataTexture | null> {
+  try {
+    const response = await fetch(BRONZE_ENVIRONMENT_URL);
+    if (!response.ok) return null;
+    const bitmap = await createImageBitmap(await response.blob(), { colorSpaceConversion: "none", premultiplyAlpha: "none" });
+    if (bitmap.width !== ENVIRONMENT_WIDTH || bitmap.height !== ENVIRONMENT_HEIGHT * 2) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return null;
+    context.drawImage(bitmap, 0, 0);
+    bitmap.close();
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+    const count = ENVIRONMENT_WIDTH * ENVIRONMENT_HEIGHT;
+    const texels = new Uint16Array(count * 4);
+    const one = DataUtils.toHalfFloat(1);
+    for (let i = 0; i < count; i += 1) {
+      const exponent = pixels[(count + i) * 4];
+      const scale = exponent === 0 ? 0 : 2 ** (exponent - 128) / 256;
+      for (let channel = 0; channel < 3; channel += 1) texels[i * 4 + channel] = DataUtils.toHalfFloat(pixels[i * 4 + channel] * scale);
+      texels[i * 4 + 3] = one;
+    }
+    const texture = new DataTexture(texels, ENVIRONMENT_WIDTH, ENVIRONMENT_HEIGHT, RGBAFormat, HalfFloatType);
+    texture.mapping = CubeUVReflectionMapping;
+    texture.colorSpace = LinearSRGBColorSpace;
+    texture.minFilter = LinearFilter;
+    texture.magFilter = LinearFilter;
+    texture.generateMipmaps = false;
+    texture.needsUpdate = true;
+    return texture;
+  } catch {
+    // A failed request or decode: prefilter at runtime instead, as before.
+    return null;
+  }
+}
+
+let bakedEnvironment: Promise<DataTexture | null> | null = null;
+
+/**
+ * Suspends until the reflections are ready. Place it inside the same Suspense boundary as the
+ * Court, so the bronze's shader is compiled once, with its environment.
+ */
 export function BronzeEnvironment() {
+  bakedEnvironment ??= loadBakedEnvironment();
+  const texture = use(bakedEnvironment);
+  return texture ? <primitive object={texture} attach="environment" /> : <RuntimeEnvironment />;
+}
+
+function RuntimeEnvironment() {
   const gl = useThree((state) => state.gl);
-  const texture = useMemo(() => new PMREMGenerator(gl).fromScene(new RoomEnvironment(), 0.04).texture, [gl]);
+  const texture = useMemo(() => new PMREMGenerator(gl).fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 128 }).texture, [gl]);
   useEffect(() => () => texture.dispose(), [texture]);
   return <primitive object={texture} attach="environment" />;
 }

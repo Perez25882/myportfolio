@@ -28,6 +28,7 @@ const FLASH_FADE = 1.8; // per second
 const MAX_DPR_TOUCH = 1.5;
 const MAX_DPR_DESKTOP = 2;
 const FAR = 220; // worlds sit 300 m apart, so only one is ever within reach
+const FLOWDESK_IDLE_MS = 6000;
 const VIEW_SHIFT = 0.13; // of the screen: frames the subject beside the text panel, not under it
 
 const CODE_WORLDS = new Set<World>(["ledgermind", "accra", "network", "about", "skills"]);
@@ -68,7 +69,7 @@ function JourneyRig({ reducedMotion, onVeil }: RigProps) {
   useFrame((state, delta) => {
     const camera = state.camera as PerspectiveCamera;
     const dt = Math.min(delta, 0.1);
-    const goal = reducedMotion ? quantize(getScrollTarget()) : getScrollTarget();
+    const goal = getScrollTarget();
     let s = view.s;
     if (!started.current || reducedMotion) s = goal;
     else if (Math.abs(goal - s) > MAX_GLIDE) {
@@ -85,7 +86,9 @@ function JourneyRig({ reducedMotion, onVeil }: RigProps) {
     const chapter = CHAPTERS[index];
     const { width, height } = state.size;
     const aspect = width / height;
-    const pose = fitToAspect(poseAt(s), aspect, !CODE_WORLDS.has(chapter.world));
+    // Reduced motion: scenes still show the state the text describes, but the camera holds each
+    // authored composition and cuts to the next instead of flying.
+    const pose = fitToAspect(poseAt(reducedMotion ? quantize(s) : s), aspect, !CODE_WORLDS.has(chapter.world));
     camera.position.set(...toThree(pose.position));
     camera.lookAt(scratch.target.set(...toThree(pose.target)));
     camera.fov = pose.fov;
@@ -152,12 +155,13 @@ export default function JourneyCanvas({ reducedMotion, coarsePointer, onVeil, on
   const [loadFlowDesk, setLoadFlowDesk] = useState(false);
   const announceReady = useEffectEvent(onReady);
 
-  // FlowDesk streams in shortly after the Court is up, or at once if the visitor is already near it.
-  if (!loadFlowDesk && active >= INDEX.monument - 1 && active <= INDEX.ledgermind) setLoadFlowDesk(true);
+  // FlowDesk streams in once the visitor heads down the page, or after the Court has been quiet on
+  // screen for a while: never in the same moments as the Court's own first frames.
+  if (!loadFlowDesk && courtReady && active >= INDEX.monument && active <= INDEX.ledgermind) setLoadFlowDesk(true);
   useEffect(() => {
     if (!courtReady) return;
     announceReady();
-    const timer = window.setTimeout(() => setLoadFlowDesk(true), 1200);
+    const timer = window.setTimeout(() => setLoadFlowDesk(true), FLOWDESK_IDLE_MS);
     return () => window.clearTimeout(timer);
   }, [courtReady]);
 
@@ -172,6 +176,9 @@ export default function JourneyCanvas({ reducedMotion, coarsePointer, onVeil, on
       camera={{ near: 0.1, far: FAR, fov: 40 }}
       gl={{ antialias: !coarsePointer || dpr < 1.5, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {
+        // Checking each shader for errors asks the driver for its link status, which blocks the
+        // main thread until compilation ends. Development builds keep the check.
+        gl.debug.checkShaderErrors = process.env.NODE_ENV !== "production";
         gl.domElement.addEventListener("webglcontextlost", (event) => {
           event.preventDefault();
           onContextLost();
@@ -183,9 +190,8 @@ export default function JourneyCanvas({ reducedMotion, coarsePointer, onVeil, on
         onDecline={() => setDpr((value) => Math.max(1, value - 0.25))}
         onIncline={() => setDpr((value) => Math.min(maxDpr, value + 0.25))}
       />
-      <BronzeEnvironment />
-
       <Suspense fallback={null}>
+        <BronzeEnvironment />
         <JourneyCourt onReady={() => setCourtReady(true)} monumentIndex={INDEX.monument} contactIndex={INDEX.contact} />
       </Suspense>
       {loadFlowDesk ? (

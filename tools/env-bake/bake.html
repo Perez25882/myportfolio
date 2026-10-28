@@ -1,0 +1,26 @@
+<!doctype html><meta charset="utf-8"><body>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+const SIZE = Number(new URLSearchParams(location.search).get("size") ?? 128);
+const renderer = new THREE.WebGLRenderer();
+const pmrem = new THREE.PMREMGenerator(renderer);
+// Exactly what the site did at runtime (baked.tsx BronzeEnvironment), at a chosen cube size.
+const target = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: SIZE });
+const { width, height } = target;
+const half = new Uint16Array(width * height * 4);
+renderer.readRenderTargetPixels(target, 0, 0, width, height, half);
+// RGBE: shared exponent in alpha. Rows stay in GL order (row 0 = bottom), uploaded unflipped.
+const rgbe = new Uint8ClampedArray(width * height * 4);
+let max = 0;
+for (let i = 0; i < width * height; i++) {
+  const r = THREE.DataUtils.fromHalfFloat(half[i * 4]), g = THREE.DataUtils.fromHalfFloat(half[i * 4 + 1]), b = THREE.DataUtils.fromHalfFloat(half[i * 4 + 2]);
+  const m = Math.max(r, g, b); max = Math.max(max, m);
+  if (m < 1e-32) { rgbe.set([0, 0, 0, 0], i * 4); continue; }
+  const e = Math.ceil(Math.log2(m)); const scale = 256 / Math.pow(2, e);
+  rgbe.set([Math.min(255, r * scale), Math.min(255, g * scale), Math.min(255, b * scale), e + 128], i * 4);
+}
+let binary = ""; for (let i = 0; i < rgbe.length; i++) binary += String.fromCharCode(rgbe[i]);
+window.result = { width, height, max, data: btoa(binary) };
+</script>
