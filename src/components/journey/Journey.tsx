@@ -22,6 +22,7 @@ const JourneyCanvas = dynamic(() => import("./JourneyCanvas"), { ssr: false });
 type Mode = "pending" | "3d" | "flat";
 
 const IDLE_TIMEOUT_MS = 1200;
+const ANCHOR_TOLERANCE_PX = 2;
 
 interface JourneyProps {
   /** The courtyard render shown behind the opening until the 3D court is ready. */
@@ -72,7 +73,8 @@ export function Journey({ poster, children }: JourneyProps) {
       };
       let lastIndex = -1;
       const update = () => {
-        const y = window.scrollY;
+        // Section tops can fall between pixels; a chapter link scrolls to a whole pixel just above.
+        const y = window.scrollY + ANCHOR_TOLERANCE_PX;
         let s = 0;
         for (let i = bounds.length - 1; i >= 0; i -= 1) {
           if (y >= bounds[i].top) {
