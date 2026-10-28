@@ -236,13 +236,6 @@
   margin-top: 0.75rem;
 }
 
-.withheld {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--text-muted);
-  font-size: var(--step-small);
-}
 
 .facts > div {
   padding-block: 0.9rem;

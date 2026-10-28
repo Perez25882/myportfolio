@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ReviewMarker } from "@/components/ReviewMarker";
 import { Section } from "@/components/editorial/Section";
 import ed from "@/components/editorial/editorial.module.css";
 import { CaseHero, CaseNotes, NextProject } from "@/components/work/CaseStudy";
@@ -34,7 +33,6 @@ export default async function CaseStudyPage(props: PageProps<"/work/[slug]">) {
         <Section id="opening" title={slug === "accra-we-dey" ? "The idea" : "The problem"}>
           <h3 className={styles.openingTitle}>
             {study.opening.heading}
-            <ReviewMarker decisions={study.pending.filter((id) => id !== "D1")} />
           </h3>
           <div className={ed.prose}>
             <p>{study.opening.body}</p>

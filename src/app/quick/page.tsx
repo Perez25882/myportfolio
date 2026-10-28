@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ContactButton } from "@/components/ContactButton";
-import { ReviewMarker } from "@/components/ReviewMarker";
+import { ContactLinks } from "@/components/ContactLinks";
 import { StatusChip, verificationChip } from "@/components/StatusChip";
 import { Section } from "@/components/editorial/Section";
 import ed from "@/components/editorial/editorial.module.css";
@@ -11,8 +11,7 @@ import { flowdeskCaseStudy } from "@/content/flowdesk";
 import { experiments } from "@/content/lab";
 import { profile } from "@/content/profile";
 import { getProject, projects } from "@/content/projects";
-import { SHOW_REVIEW_MARKERS } from "@/content/review";
-import { services, servicesPending } from "@/content/services";
+import { services } from "@/content/services";
 import { currentFocus, familiarSkills, shippedSkills } from "@/content/skills";
 import { story } from "@/content/story";
 import type { Project } from "@/content/types";
@@ -56,7 +55,6 @@ function Hero() {
         </h1>
         <p className={styles.role}>
           {profile.roleLine}
-          <ReviewMarker decisions={profile.pending.roleLine} />
         </p>
         <p className={`${ed.lede} ${styles.statement}`}>
           I build software around how Ghanaian businesses already work: orders that arrive on WhatsApp, payments made
@@ -106,11 +104,9 @@ function About() {
       </div>
       <p className={styles.motto}>
         {profile.narrativeLine[0]} {profile.narrativeLine[1]}
-        <ReviewMarker decisions={profile.pending.narrativeLine} />
       </p>
       <h3 className={`${ed.subTitle} ${styles.buildTitle}`}>
         What I build
-        <ReviewMarker decisions={profile.pending.whatIBuild} />
       </h3>
       <ul className={styles.build}>
         {profile.whatIBuild.map((line) => (
@@ -168,7 +164,6 @@ function ProjectPlate({ project }: { readonly project: Project }) {
             <dt>Role</dt>
             <dd>
               {project.role}
-              <ReviewMarker decisions={project.pending.filter((id) => id === "D1")} />
             </dd>
           </div>
           <div>
@@ -182,7 +177,6 @@ function ProjectPlate({ project }: { readonly project: Project }) {
 }
 
 function ProjectLinks({ project }: { readonly project: Project }) {
-  const showWithheld = SHOW_REVIEW_MARKERS && project.withheldLinks.length > 0;
   return (
     <div className={styles.links}>
       {project.caseStudyHref ? (
@@ -196,14 +190,6 @@ function ProjectLinks({ project }: { readonly project: Project }) {
           <span className="visually-hidden"> (opens in a new tab)</span>
         </a>
       ))}
-      {showWithheld
-        ? project.withheldLinks.map((withheld) => (
-            <span key={withheld.label} className={styles.withheld}>
-              {withheld.label} link withheld
-              <ReviewMarker decisions={[withheld.reason]} />
-            </span>
-          ))
-        : null}
     </div>
   );
 }
@@ -230,7 +216,6 @@ function Experience() {
       </ol>
       <p className={styles.teamNote}>
         Team experience: frontend contributor in a three-person team on JoyDataBundle, a live product.
-        <ReviewMarker decisions={["Q11"]} />
       </p>
     </Section>
   );
@@ -297,7 +282,6 @@ function WorkWithMe() {
           How a project works
         </Link>
         <ContactButton className={`${ed.button} ${ed.secondary}`} label="Start a conversation" />
-        <ReviewMarker decisions={servicesPending} />
       </div>
     </Section>
   );
@@ -370,10 +354,7 @@ function Contact() {
       </p>
       <div className={`${ed.actions} ${styles.contactActions}`}>
         <ContactButton className={`${ed.button} ${ed.primary}`} label="Get in touch" />
-        <a className={`${ed.button} ${ed.secondary}`} href={profile.contact.github} target="_blank" rel="noopener noreferrer">
-          GitHub <span className="visually-hidden">(opens in a new tab)</span>
-        </a>
-        <ReviewMarker decisions={profile.pending.contact} />
+        <ContactLinks linkClassName={`${ed.button} ${ed.secondary}`} />
       </div>
     </Section>
   );

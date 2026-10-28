@@ -39,13 +39,19 @@ describe("content register", () => {
       const published = new Set(project.links.map((link) => link.label));
       for (const withheld of project.withheldLinks) {
         expect(published.has(withheld.label)).toBe(false);
-        expect(project.pending).toContain(withheld.reason);
       }
     }
   });
 
-  it("contains no phone numbers, email addresses or tunnel URLs", () => {
-    const text = JSON.stringify({ profile, projects, story, capabilities, flowdeskCaseStudy });
+  it("publishes only Perez's own contact details", () => {
+    expect(profile.contact.emails).toEqual(["perez25882@gmail.com", "pereztegbey66@gmail.com"]);
+    expect(profile.contact.phone?.tel).toBe("tel:+233558425882");
+  });
+
+  it("contains no other phone numbers, email addresses or tunnel URLs", () => {
+    // Perez's own channels are published on purpose; nobody else's may be (FlowDesk's test
+    // customers, for one).
+    const text = JSON.stringify({ profile: { ...profile, contact: null }, projects, story, capabilities, flowdeskCaseStudy });
     expect(text).not.toMatch(/\+?233[\s-]?\d{2}/);
     expect(text).not.toMatch(/\b0\d{9}\b/);
     expect(text).not.toMatch(/[\w.+-]+@[\w-]+\.[a-z]{2,}/i);

@@ -1,8 +1,6 @@
-import type { DecisionId } from "./types";
-
 /**
  * Freelance services (Work with me). The service list comes from the founder's design
- * directive of 2026-10-27; descriptions and process wording await confirmation (S1).
+ * directive of 2026-10-27; descriptions and process wording confirmed on 2026-10-28 (S1).
  * No prices, testimonials or client results are stated anywhere.
  */
 
@@ -96,4 +94,3 @@ export const process: readonly { readonly title: string; readonly detail: string
   },
 ];
 
-export const servicesPending: readonly DecisionId[] = ["S1"];

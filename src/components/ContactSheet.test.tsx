@@ -4,10 +4,11 @@ import { useUiStore } from "@/store/ui";
 import { ContactButton } from "./ContactButton";
 import { ContactSheet } from "./ContactSheet";
 
-const WITH_EMAIL = {
+const WITH_CV = {
   github: "https://github.com/Perez25882",
-  email: "hello@example.com",
+  emails: ["hello@example.com"],
   linkedin: "https://www.linkedin.com/in/example",
+  phone: null,
   cvHref: "/cv.pdf",
 };
 
@@ -41,16 +42,20 @@ describe("ContactSheet", () => {
     expect(useUiStore.getState().contactOpen).toBe(false);
   });
 
-  it("explains that email and CV are pending when they are not configured", () => {
+  it("offers both email addresses, WhatsApp, a call and LinkedIn", () => {
     render(<ContactSheet />);
     act(() => useUiStore.getState().openContact());
 
-    expect(screen.getByText(/will appear here once confirmed/)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Copy" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "perez25882@gmail.com" })).toHaveAttribute("href", expect.stringMatching(/^mailto:perez25882@gmail\.com/));
+    expect(screen.getByRole("link", { name: "pereztegbey66@gmail.com" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", "https://wa.me/233558425882");
+    expect(screen.getByRole("link", { name: /Call/ })).toHaveAttribute("href", "tel:+233558425882");
+    expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/perez-tegbey-55a74928b");
+    expect(screen.queryByRole("link", { name: "Download CV" })).not.toBeInTheDocument();
   });
 
   it("builds the email subject from the chosen intent", () => {
-    render(<ContactSheet contact={WITH_EMAIL} />);
+    render(<ContactSheet contact={WITH_CV} />);
     act(() => useUiStore.getState().openContact());
 
     fireEvent.click(screen.getByRole("button", { name: "Freelance" }));
@@ -61,25 +66,24 @@ describe("ContactSheet", () => {
       "mailto:hello@example.com?subject=Freelance%20enquiry",
     );
     expect(screen.getByRole("link", { name: "Download CV" })).toHaveAttribute("href", "/cv.pdf");
-    expect(screen.queryByText(/will appear here once confirmed/)).not.toBeInTheDocument();
   });
 
   it("confirms when the email address is copied", async () => {
     setClipboard(() => Promise.resolve());
-    render(<ContactSheet contact={WITH_EMAIL} />);
+    render(<ContactSheet contact={WITH_CV} />);
     act(() => useUiStore.getState().openContact());
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    fireEvent.click(screen.getByRole("button", { name: "Copy hello@example.com" }));
 
-    expect(await screen.findByText("Email address copied.")).toBeInTheDocument();
+    expect(await screen.findByText("hello@example.com copied.")).toBeInTheDocument();
   });
 
   it("says so when copying fails", async () => {
     setClipboard(() => Promise.reject(new Error("denied")));
-    render(<ContactSheet contact={WITH_EMAIL} />);
+    render(<ContactSheet contact={WITH_CV} />);
     act(() => useUiStore.getState().openContact());
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy" }));
+    fireEvent.click(screen.getByRole("button", { name: "Copy hello@example.com" }));
 
     expect(await screen.findByText(/Couldn't copy/)).toBeInTheDocument();
   });

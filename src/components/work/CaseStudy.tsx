@@ -1,17 +1,14 @@
 import Link from "next/link";
-import { ReviewMarker } from "@/components/ReviewMarker";
 import { StatusChip, verificationChip } from "@/components/StatusChip";
 import ed from "@/components/editorial/editorial.module.css";
 import type { CaseNote } from "@/content/caseStudies";
 import { projects } from "@/content/projects";
-import { SHOW_REVIEW_MARKERS } from "@/content/review";
 import type { Project } from "@/content/types";
 import { ProjectVisual } from "./ProjectVisual";
 import styles from "./case.module.css";
 
 /** The top of every case study: what it is, where it stands, who did what, and its visual. */
 export function CaseHero({ project, status }: { readonly project: Project; readonly status: string }) {
-  const showWithheld = SHOW_REVIEW_MARKERS && project.withheldLinks.length > 0;
   return (
     <>
       <header className={styles.hero}>
@@ -37,14 +34,13 @@ export function CaseHero({ project, status }: { readonly project: Project; reado
             <dt>Role</dt>
             <dd>
               {project.role}
-              <ReviewMarker decisions={project.pending.filter((id) => id === "D1")} />
             </dd>
           </div>
           <div>
             <dt>Built with</dt>
             <dd className={ed.mono}>{project.stack.join(", ")}</dd>
           </div>
-          {project.links.length > 0 || showWithheld ? (
+          {project.links.length > 0 ? (
             <div>
               <dt>Links</dt>
               <dd className={styles.links}>
@@ -54,14 +50,6 @@ export function CaseHero({ project, status }: { readonly project: Project; reado
                     <span className="visually-hidden"> (opens in a new tab)</span>
                   </a>
                 ))}
-                {showWithheld
-                  ? project.withheldLinks.map((withheld) => (
-                      <span key={withheld.label} className={ed.muted}>
-                        {withheld.label} link withheld
-                        <ReviewMarker decisions={[withheld.reason]} />
-                      </span>
-                    ))
-                  : null}
               </dd>
             </div>
           ) : null}

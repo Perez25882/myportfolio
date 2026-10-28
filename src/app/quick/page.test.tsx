@@ -44,7 +44,6 @@ describe("Quick View", () => {
     const flowdesk = screen.getByRole("article", { name: "FlowDesk" });
     expect(within(flowdesk).getByText(/not product screenshots/)).toBeInTheDocument();
     expect(within(flowdesk).queryByRole("link", { name: /Repository/ })).not.toBeInTheDocument();
-    expect(within(flowdesk).getByText(/Repository link withheld/)).toBeInTheDocument();
   });
 
   it("opens external links in a new tab safely, and says so", () => {

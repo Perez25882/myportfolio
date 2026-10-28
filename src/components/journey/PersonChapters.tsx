@@ -1,13 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ContactButton } from "@/components/ContactButton";
-import { ReviewMarker } from "@/components/ReviewMarker";
+import { ContactLinks } from "@/components/ContactLinks";
 import { Wordmark } from "@/components/Wordmark";
 import { profile } from "@/content/profile";
-import { services, servicesPending } from "@/content/services";
+import { services } from "@/content/services";
 import { familiarSkills, shippedSkills } from "@/content/skills";
 import { story } from "@/content/story";
-import type { DecisionId } from "@/content/types";
 import { formatMonth } from "@/lib/format";
 import { Beat, Chapter, FlatVisual } from "./Chapter";
 import styles from "./journey.module.css";
@@ -32,7 +31,6 @@ export function OpeningChapter() {
         <p className={styles.availability}>
           <span className={styles.dot} aria-hidden="true" />
           {profile.availability}
-          <ReviewMarker decisions={profile.pending.roleLine} />
         </p>
         <h1 id="opening-title" className={styles.heroTitle}>
           <Wordmark size="lg" showLockup />
@@ -49,7 +47,7 @@ export function OpeningChapter() {
           <a href="#about">About</a>
           <ContactButton className={styles.textButton} />
           <Link href="/quick">2D portfolio</Link>
-          {profile.contact.cvHref ? <a href={profile.contact.cvHref}>CV</a> : <ReviewMarker decisions={["Q11"]} />}
+          {profile.contact.cvHref ? <a href={profile.contact.cvHref}>CV</a> : null}
         </nav>
         <p className={styles.cue} aria-hidden="true">
           Scroll to begin
@@ -133,7 +131,6 @@ export function AboutChapter() {
 interface SkillArea {
   readonly area: string;
   readonly detail: string;
-  readonly pending?: readonly DecisionId[];
 }
 
 function SkillList({ areas }: { readonly areas: readonly SkillArea[] }) {
@@ -143,7 +140,6 @@ function SkillList({ areas }: { readonly areas: readonly SkillArea[] }) {
         <div key={entry.area}>
           <dt>
             {entry.area}
-            <ReviewMarker decisions={entry.pending ?? []} />
           </dt>
           <dd>{entry.detail}</dd>
         </div>
@@ -162,7 +158,7 @@ export function SkillsChapter() {
   const practices: SkillArea[] = [
     { area: "Architecture", detail: "Message queues that don't lose orders, offline-first sync and realtime game servers." },
     { area: "Security", detail: "Security reviews, row-level access, and guardrails that keep an AI assistant inside the shop's prices." },
-    { area: "AI-assisted engineering", detail: "AI tools as part of how software is designed, built and reviewed.", pending: ["D2"] },
+    { area: "AI-assisted engineering", detail: "AI tools as part of how software is designed, built and reviewed." },
   ];
   return (
     <Chapter id="skills">
@@ -207,14 +203,12 @@ export function ServicesChapter() {
           <ContactButton className={styles.primaryButton} label="Tell me about it" />
           <Link href="/work-with-me">How working together works</Link>
         </p>
-        <ReviewMarker decisions={servicesPending} />
       </Beat>
     </Chapter>
   );
 }
 
 export function ContactChapter() {
-  const { contact } = profile;
   return (
     <Chapter id="contact" tone="basalt">
       <Beat surface="basalt" className={styles.finale}>
@@ -224,20 +218,10 @@ export function ContactChapter() {
         <p className={styles.lede}>For a job, a freelance project or a collaboration. Tell me what you&apos;re working on.</p>
         <p className={styles.finaleActions}>
           <ContactButton className={styles.primaryButton} label="Contact Perez" />
-          {contact.email ? <a href={`mailto:${contact.email}`}>{contact.email}</a> : null}
-          {contact.linkedin ? (
-            <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">
-              LinkedIn<span className="visually-hidden"> (opens in a new tab)</span>
-            </a>
-          ) : null}
-          <a href={contact.github} target="_blank" rel="noopener noreferrer">
-            GitHub<span className="visually-hidden"> (opens in a new tab)</span>
-          </a>
-          {contact.cvHref ? <a href={contact.cvHref}>CV</a> : null}
+          <ContactLinks />
           <Link href="/work-with-me">Work with me</Link>
           <Link href="/quick">2D portfolio</Link>
         </p>
-        <ReviewMarker decisions={profile.pending.contact} />
       </Beat>
     </Chapter>
   );

@@ -14,7 +14,7 @@ export const profile = {
   narrativeLine: ["Curiosity made me explore.", "Ambition made me build."],
   intro:
     "An interactive 3D portfolio of real projects, technical depth and a journey towards what's next.",
-  /** From the approved concept image; wording not yet confirmed (D6). */
+  /** From the approved concept image; confirmed by the founder on 2026-10-28 (D6). */
   roleLine: "Developer / Product Builder",
   availability: "Open to work",
   whatIBuild: [
@@ -22,20 +22,26 @@ export const profile = {
     "Backends with queues, payment integrity and security reviews, not just happy paths.",
     "3D and realtime web: Three.js scenes, rigged characters and multiplayer servers.",
   ],
+  /** Founder-supplied on 2026-10-28 (resolves Q10). No CV has been supplied yet (Q11). */
   contact: {
     github: "https://github.com/Perez25882",
-    /** Not published until the founder chooses contact channels (Q10). */
-    email: null as string | null,
-    linkedin: null as string | null,
-    /** Not published until the founder supplies a CV (Q11). */
+    emails: ["perez25882@gmail.com", "pereztegbey66@gmail.com"] as readonly string[],
+    linkedin: "https://www.linkedin.com/in/perez-tegbey-55a74928b" as string | null,
+    /** Ghana mobile 055 842 5882, reachable by WhatsApp and by phone. */
+    phone: { display: "+233 55 842 5882", tel: "tel:+233558425882", whatsapp: "https://wa.me/233558425882" } as {
+      readonly display: string;
+      readonly tel: string;
+      readonly whatsapp: string;
+    } | null,
     cvHref: null as string | null,
   },
   intents: ["Employment", "Freelance", "Collaboration"],
+  /** Every review decision was resolved by the founder on 2026-10-28: the wording above stands. */
   pending: {
     narrativeLine: [],
-    roleLine: ["D6"],
-    whatIBuild: ["D6"],
-    contact: ["Q10", "Q11"],
+    roleLine: [],
+    whatIBuild: [],
+    contact: [],
   } satisfies Record<string, readonly DecisionId[]>,
 } as const;
 

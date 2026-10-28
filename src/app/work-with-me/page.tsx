@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ContactButton } from "@/components/ContactButton";
-import { ReviewMarker } from "@/components/ReviewMarker";
+import { ContactLinks } from "@/components/ContactLinks";
 import { Section } from "@/components/editorial/Section";
 import ed from "@/components/editorial/editorial.module.css";
 import { profile } from "@/content/profile";
-import { process, services, servicesPending } from "@/content/services";
+import { process, services } from "@/content/services";
 import styles from "./services.module.css";
 
 export const metadata: Metadata = {
@@ -24,7 +24,6 @@ export default function WorkWithMePage() {
           <p className={`${ed.lede} ${styles.lede}`}>
             I design and build websites, web apps and internal tools for businesses and individuals, from the first
             conversation to launch.
-            <ReviewMarker decisions={servicesPending} />
           </p>
           <div className={ed.actions}>
             <ContactButton className={`${ed.button} ${ed.primary}`} label="Start a conversation" />
@@ -117,10 +116,7 @@ export default function WorkWithMePage() {
           <p className={ed.lede}>{profile.availability} for freelance projects, as well as employment and collaboration.</p>
           <div className={`${ed.actions} ${styles.closing}`}>
             <ContactButton className={`${ed.button} ${ed.primary}`} label="Start a conversation" />
-            <a className={`${ed.button} ${ed.secondary}`} href={profile.contact.github} target="_blank" rel="noopener noreferrer">
-              GitHub <span className="visually-hidden">(opens in a new tab)</span>
-            </a>
-            <ReviewMarker decisions={profile.pending.contact} />
+            <ContactLinks linkClassName={`${ed.button} ${ed.secondary}`} />
           </div>
         </Section>
       </div>

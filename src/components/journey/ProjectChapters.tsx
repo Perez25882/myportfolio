@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ReviewMarker } from "@/components/ReviewMarker";
 import { StatusChip } from "@/components/StatusChip";
 import { ProjectVisual } from "@/components/work/ProjectVisual";
 import { getCaseStudy } from "@/content/caseStudies";
@@ -103,7 +102,6 @@ export function FlowDeskChapter() {
         </p>
         <p className={styles.small}>{flowdeskCaseStudy.statusNote}</p>
         <CaseLinks project={flowdesk} extra={<Link href="/museum?stop=conversation">Play the customer in the guided tour</Link>} />
-        <ReviewMarker decisions={flowdesk.pending} />
       </Beat>
     </Chapter>
   );
@@ -136,7 +134,6 @@ export function LedgerMindChapter() {
           changes after the sync. {ledgermindStudy.status}
         </p>
         <CaseLinks project={ledgermind} />
-        <ReviewMarker decisions={ledgermind.pending} />
       </Beat>
     </Chapter>
   );
@@ -166,7 +163,6 @@ export function AccraChapter() {
         </p>
         <p className={styles.small}>{accraStudy.status}</p>
         <CaseLinks project={accra} />
-        <ReviewMarker decisions={accra.pending} />
       </Beat>
     </Chapter>
   );
@@ -193,7 +189,6 @@ export function JoyDataBundleChapter() {
         <p>{note(notes, "Payouts that are checked before they're paid")}</p>
         <p className={styles.small}>{note(notes, "Live")}</p>
         <CaseLinks project={joydata} />
-        <ReviewMarker decisions={joydata.pending} />
       </Beat>
     </Chapter>
   );

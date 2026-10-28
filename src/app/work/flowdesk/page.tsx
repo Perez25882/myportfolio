@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { CaptionToggle } from "@/components/CaptionToggle";
-import { ReviewMarker } from "@/components/ReviewMarker";
 import { StatusChip, verificationChip } from "@/components/StatusChip";
 import { StrataList } from "@/components/StrataList";
 import { Section } from "@/components/editorial/Section";
@@ -68,8 +67,7 @@ export default function FlowDeskPage() {
             })}
           </ul>
           <p className={`${ed.muted} ${styles.withheld}`}>
-            The repository link will be added once a setup document with private details has been cleaned.
-            <ReviewMarker decisions={["D3"]} />
+            The repository stays private: its setup notes contain personal contact details.
           </p>
         </Section>
 

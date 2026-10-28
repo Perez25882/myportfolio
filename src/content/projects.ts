@@ -38,7 +38,7 @@ export const projects: readonly Project[] = [
     ],
     links: [],
     withheldLinks: [{ label: "Repository", reason: "D3" }],
-    pending: ["D1", "D3"],
+    pending: [],
     caseStudyHref: "/work/flowdesk",
   },
   {
@@ -70,7 +70,7 @@ export const projects: readonly Project[] = [
     ],
     links: [{ label: "Repository", href: `${GH}/ledmi_os` }],
     withheldLinks: [],
-    pending: ["D1"],
+    pending: [],
     caseStudyHref: "/work/ledgermind",
   },
   {
@@ -97,7 +97,7 @@ export const projects: readonly Project[] = [
     ],
     links: [],
     withheldLinks: [{ label: "Repository", reason: "D5" }],
-    pending: ["D5"],
+    pending: [],
     caseStudyHref: "/work/accra-we-dey",
   },
   {
@@ -127,7 +127,7 @@ export const projects: readonly Project[] = [
       { label: "Repository", href: `${GH}/JBFrontNew` },
     ],
     withheldLinks: [],
-    pending: ["D1"],
+    pending: [],
     caseStudyHref: "/work/joydatabundle",
   },
 ];

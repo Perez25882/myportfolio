@@ -74,7 +74,7 @@ export const caseStudies: readonly CaseStudyContent[] = [
       },
     ],
     status: "No production users, customers or revenue are claimed.",
-    pending: ["D1"],
+    pending: [],
   },
   {
     slug: "accra-we-dey",
@@ -105,7 +105,7 @@ export const caseStudies: readonly CaseStudyContent[] = [
       },
     ],
     status: "The repository is not linked yet.",
-    pending: ["D5"],
+    pending: [],
   },
   {
     slug: "joydatabundle",
@@ -136,7 +136,7 @@ export const caseStudies: readonly CaseStudyContent[] = [
       },
     ],
     status: "The public site is up.",
-    pending: ["D1"],
+    pending: [],
   },
 ];
 

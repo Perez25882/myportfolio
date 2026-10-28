@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { profile, type ContactIntent } from "@/content/profile";
 import { useUiStore } from "@/store/ui";
-import { ReviewMarker } from "./ReviewMarker";
 import styles from "./ContactSheet.module.css";
 
 type Contact = {
   readonly github: string;
-  readonly email: string | null;
+  readonly emails: readonly string[];
   readonly linkedin: string | null;
+  readonly phone: { readonly display: string; readonly tel: string; readonly whatsapp: string } | null;
   readonly cvHref: string | null;
 };
 
@@ -18,13 +18,13 @@ type Props = {
   readonly contact?: Contact;
 };
 
-type CopyState = "idle" | "copied" | "failed";
+type CopyState = { readonly status: "idle" } | { readonly status: "copied"; readonly email: string } | { readonly status: "failed" };
 
-const COPY_MESSAGES: Record<CopyState, string> = {
-  idle: "",
-  copied: "Email address copied.",
-  failed: "Couldn't copy. Select the address instead.",
-};
+function copyMessage(state: CopyState): string {
+  if (state.status === "copied") return `${state.email} copied.`;
+  if (state.status === "failed") return "Couldn't copy. Select the address instead.";
+  return "";
+}
 
 /** Global contact panel: a side panel on desktop, a bottom sheet on mobile. */
 export function ContactSheet({ contact = profile.contact }: Props) {
@@ -62,17 +62,25 @@ export function ContactSheet({ contact = profile.contact }: Props) {
         </header>
         <p className={styles.lede}>
           {profile.availability}: employment, freelance work and collaboration.
-          <ReviewMarker decisions={profile.pending.roleLine} />
         </p>
 
-        {contact.email ? <EmailBlock email={contact.email} /> : null}
+        {contact.emails.length > 0 ? <EmailBlock emails={contact.emails} /> : null}
 
         <ul className={styles.channels}>
-          <li>
-            <a href={contact.github} target="_blank" rel="noopener noreferrer">
-              GitHub <span className={styles.meta}>github.com/Perez25882</span>
-            </a>
-          </li>
+          {contact.phone ? (
+            <>
+              <li>
+                <a href={contact.phone.whatsapp} target="_blank" rel="noopener noreferrer">
+                  WhatsApp <span className={styles.meta}>{contact.phone.display}</span>
+                </a>
+              </li>
+              <li>
+                <a href={contact.phone.tel}>
+                  Call <span className={styles.meta}>{contact.phone.display}</span>
+                </a>
+              </li>
+            </>
+          ) : null}
           {contact.linkedin ? (
             <li>
               <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">
@@ -80,19 +88,17 @@ export function ContactSheet({ contact = profile.contact }: Props) {
               </a>
             </li>
           ) : null}
+          <li>
+            <a href={contact.github} target="_blank" rel="noopener noreferrer">
+              GitHub <span className={styles.meta}>github.com/Perez25882</span>
+            </a>
+          </li>
           {contact.cvHref ? (
             <li>
               <a href={contact.cvHref}>Download CV</a>
             </li>
           ) : null}
         </ul>
-
-        {!contact.email || !contact.cvHref ? (
-          <p className={styles.pending}>
-            Email, contact form and CV will appear here once confirmed.
-            <ReviewMarker decisions={profile.pending.contact} />
-          </p>
-        ) : null}
 
         <p className={styles.project}>
           Planning a project?{" "}
@@ -105,20 +111,20 @@ export function ContactSheet({ contact = profile.contact }: Props) {
   );
 }
 
-function EmailBlock({ email }: { readonly email: string }) {
+function EmailBlock({ emails }: { readonly emails: readonly string[] }) {
   const [intent, setIntent] = useState<ContactIntent>("Employment");
-  const [copyState, setCopyState] = useState<CopyState>("idle");
+  const [copyState, setCopyState] = useState<CopyState>({ status: "idle" });
 
-  const handleCopy = async () => {
+  const handleCopy = async (email: string) => {
     try {
       await navigator.clipboard.writeText(email);
-      setCopyState("copied");
+      setCopyState({ status: "copied", email });
     } catch {
-      setCopyState("failed");
+      setCopyState({ status: "failed" });
     }
   };
 
-  const mailto = `mailto:${email}?subject=${encodeURIComponent(`${intent} enquiry`)}`;
+  const subject = encodeURIComponent(`${intent} enquiry`);
 
   return (
     <div className={styles.email}>
@@ -136,16 +142,18 @@ function EmailBlock({ email }: { readonly email: string }) {
           </button>
         ))}
       </fieldset>
-      <div className={styles.emailRow}>
-        <a className={styles.emailLink} href={mailto}>
-          {email}
-        </a>
-        <button type="button" className={styles.copy} onClick={handleCopy}>
-          Copy
-        </button>
-      </div>
+      {emails.map((email) => (
+        <div key={email} className={styles.emailRow}>
+          <a className={styles.emailLink} href={`mailto:${email}?subject=${subject}`}>
+            {email}
+          </a>
+          <button type="button" className={styles.copy} onClick={() => handleCopy(email)} aria-label={`Copy ${email}`}>
+            Copy
+          </button>
+        </div>
+      ))}
       <p className={styles.status} role="status">
-        {COPY_MESSAGES[copyState]}
+        {copyMessage(copyState)}
       </p>
     </div>
   );
