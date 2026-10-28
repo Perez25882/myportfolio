@@ -9,6 +9,8 @@ Commits (local only):
 - `97b59b1` adds the scroll-driven 3D journey on the home page.
 - `3211542` bakes the bronze's reflections and fixes the finale and phone framing.
 - `a6600fe` makes chapter links land on their chapter.
+- `bbd2838` publishes Perez's contact details and removes the review markers.
+- `01b7e5e` adds the project showroom and tells each bay in Perez's own voice.
 
 `docs/phase-2f/phase-2f-report.md` stays uncommitted, as asked.
 
@@ -85,6 +87,8 @@ The guided tour (`/museum`), the 2D portfolio (`/quick`), the case studies and W
 | Desktop | **92** | 0.9 s | 160 ms | 0 |
 | Mobile (simulated 4× CPU, slow 4G) | **61** | 3.6 s | 1.5 s | 0 |
 
+**With the showroom (2026-10-28):** the showroom building is 1.06 MB (it replaces FlowDesk's 0.42 MB file and the three code-built scenes) and streams in after the Court. Loading tasks stay under about 0.2 s on this laptop; across two full scrolls, one 0.65 s task appeared once near the Contact chapter and did not repeat. Lighthouse was not re-run after the showroom.
+
 **Long tasks on this laptop (Intel HD 520, unthrottled):** the longest task while loading the home page was cut from **4.9 s to under 0.2 s**. A full scroll through all ten chapters stays under about 0.1 s per task in repeated runs.
 
 The cause was the bronze's reflections: three.js was prefiltering them in the browser, blocking the main thread for 0.5 to 5 s on both the journey and `/museum`. They are now baked once (`tools/env-bake`) into a 137 KB PNG. A related cost also went: three's per-shader error check blocked on the driver, and it is now skipped in production.
@@ -102,7 +106,7 @@ The cause was the bronze's reflections: three.js was prefiltering them in the br
 
 - **Contact:** both email addresses (perez25882@gmail.com and pereztegbey66@gmail.com, each with a copy button), WhatsApp and a call link for +233 55 842 5882, and LinkedIn appear in the finale, the contact panel, the 2D portfolio and Work with me.
 - **Review markers:** every open decision was resolved by the founder; the "to confirm" markers and their code are gone. FlowDesk's and Accra We Dey's repositories stay private.
-- **Still to come:** a CV. It appears everywhere automatically once `profile.contact.cvHref` is set.
+- **CV:** none, by the founder's choice. Nothing links to one.
 
 ## Reviewing it
 
